@@ -1,0 +1,104 @@
+%{
+import 'package:edart/fragment.dart';
+}%
+
+# Nonterminals
+List<Fragment>
+Fragments =
+  Fragment* 'eof'
+  ;
+
+Fragment
+Fragment =
+  '<%@' d:Directive ClosedTag { $$ = Fragment.directive(d); }
+  / '<%==' s:'source' ClosedTag { $$ = Fragment.raw(s); }
+  / '<%=' s:'source' ClosedTag { $$ = Fragment.expression(s); }
+  / '<%' s:'source' ClosedTag { $$ = Fragment.code(s); }
+  / s:'text' { $$ = Fragment.text(s); }
+  ;
+
+ClosedTag =
+  '%>'
+  ;
+
+Directive
+Directive =
+  n:'indentifier' a:Attributes { $$ = Directive(n, a); }
+  ;
+
+List<Attribute>
+Attributes =
+  Attribute*
+  ;
+
+Attribute
+Attribute =
+  n:'indentifier' '=' v:'string' { $$ = Attribute(n, v); }
+  ;
+
+# Terminals
+'eof' =
+  @eof
+  ;
+
+'indentifier' =
+  i:<[a-zA-Z_][a-zA-Z_0-9]*> @white
+  ;
+
+'source' =
+  <(!"%>" .)*>
+  ;
+
+String
+'string' =
+  "\"" c:@char* "\"" @white { $$ = String.fromCharCodes(c); }
+  ;
+
+'text' =
+  <!@eof (!"<%" !@newline .)* @newline?>
+  ;
+
+'=' =
+  "=" @white
+  ;
+
+'<%' =
+  "<%" @white
+  ;
+
+'<%=' =
+  "<%=" @white
+  ;
+
+'<%==' =
+  "<%==" @white
+  ;
+
+'<%@' =
+  "<%@" @white
+  ;
+
+'%>' =
+  "%>"
+  ;
+
+# Subterminals
+# TODO: improve
+@char =
+  [\u20-\u21]
+  / [\u23-\u5b]
+  / [\u5d-\u10ffff]
+  ;
+
+@eof =
+  !.
+  ;
+
+@newline =
+  [\n]
+  / "\r\n"
+  ;
+
+@white =
+  ([ \n\t] / "\r\n")*
+  ;

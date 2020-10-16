@@ -1,0 +1,40 @@
+<%@ import uri="layout.dart" %>
+<%@ import uri="header.html.g.dart" %>
+<%@ import uri="footer.html.g.dart" %>
+<%@ import uri="nav.html.g.dart" %>
+<%@ export uri="view.dart" %>
+<%@ class extends="Layout" %>
+<%@ render params="StringBuffer body, HttpRequest request" %>
+<html>
+
+<head>
+    <title><%= title %></title>
+    <% for (final meta in metas) { %>
+    <meta <%= HtmlUtils.attrs(meta) %> />
+    <% } %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+
+<body>
+    <% out.write(header_html().render(title)); %>
+
+    <% out.write(nav_html().render(request)); %>
+
+    <div class="w3-container">
+        <%== body %>
+    </div>
+
+    <% out.write(footer_html().render()); %>
+
+</body>
+
+</html>
+<%
+body.clear();
+body.write(out);
+final response = request.response;
+response.headers.add('Content-Type', 'text/html; charset=utf-8');
+response.statusCode = 400;
+response.write(out);
+%>

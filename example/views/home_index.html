@@ -1,0 +1,12 @@
+<%@ import uri="layout.html.g.dart" %>
+<%@ class extends="View" %>
+<%@ render params="HttpRequest request" %>
+<p>
+    <a href="<%= SiteLinks.productsIndex %>">View our cool products</a>
+</p>
+<%
+final layout = layout_html();
+layout.title = 'Home page';
+layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.render(out, request);
+%>

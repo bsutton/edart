@@ -1,0 +1,136 @@
+<%@ import uri="dart:io" %>
+<%@ import uri="package:pubspec_parse/pubspec_parse.dart" %>
+<%@ render params="Pubspec pubspec" %>
+<%
+const tagCod = '<%';
+final tagDir = '<%@';
+final tagExp = '<%=';
+final tagRaw = '<%==';
+final tagEnd = '%' + '>';
+%>
+# <%= pubspec.name %>  
+=======
+
+<%= pubspec.description %>
+
+Version: <%= pubspec.version %>
+
+### Warning
+
+*This software is under development.*  
+*Support for a typical build system for Dart (build_runner) will be added in the near future.*
+
+### About
+
+`Edart` is a templating engine and compiler. The template is compiled into native Dart code.  
+The main feature of the template engine is that it can contain Dart source code and, as a result, the entire template will be compiled into Dart source code.  
+This feature can be called embedded Dart.
+
+`Edart` can be used to generate text files, but the main purpose is for use in web server implementations.  
+It allows you to separate the controller and the view and at the same time does not limit the possibilities for the implementation of the view.  
+You can implement the view as you see fit and appropriate for your application. No coding or implementation conventions (except using template tags).  
+This is an advantage and a disadvantage at the same time.
+
+### Cons
+
+- Doesn't contain built-in support for features such as layouts, blocks, includes etc
+- Requires compilation of templates before use
+- Not very graceful
+
+### Pros
+
+- Allows to implement such features as layouts, blocks, includes etc in any convenient way
+- Templates are compiled to Dart source code
+- Doesn't use reflection
+- Fast execution of templates
+- Simple and straightforward syntax
+
+### Concept
+
+Everything in the template is text except what's included in the template tags.  
+Four kinds of opening tags are supported.
+
+- `<%== tagCod %>` Embedded source code
+- `<%== tagExp %>` An expression whose value will be escaped (using html escape)
+- `<%== tagRaw %>` An expression whose value will be output as is (no escaping)
+- `<%== tagDir %>` Compiler directive
+
+The sequence of characters `<%== tagEnd %>` is used as the closing tag.
+
+### Tags
+
+The `<%== tagCod %>` tag is used to add (embed) source code to the template (to the template source code).  
+Any leading spaces from the beginning of the line before the opening tag `<%== tagCod %>` will be removed.  
+If a `newline` immediately follows the closing tag `<%== tagEnd %>`, a `newline` will be removed.
+
+```html
+<%== tagCod %>
+final layout = layout_html();
+layout.title = 'Products';
+layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.render(out, request);
+<%== tagEnd %>
+```
+
+The `<%== tagExp %>` tag is used to output the value of an expression to a template.  
+The expression value will be escaped (html escape).
+
+```html
+<%== tagExp %> product.name <%== tagEnd %>
+```
+
+The `<%== tagRaw %>` tag is used to output the value of an expression to a template.  
+The value of the expression will be output as is (no escaping).
+
+```html
+<%== tagRaw %> getCssClass(item, active) <%== tagEnd %>
+```
+
+The `<%== tagDir %>` tag is used to specify template compiler directives.  
+Any leading spaces from the beginning of the line before the opening tag `<%== tagDir %>` will be removed.  
+If a `newline` immediately follows the closing tag `<%== tagEnd %>`, a `newline` will be removed.
+
+Template compiler directive format.  
+`<%== tagDir %> directive option1="value1" option2="value2" <%== tagEnd %>`
+
+```html
+<%== tagDir %>` import uri="dart:collection" <%== tagEnd %>
+```
+
+### Compiler directives
+
+List of compiler directives (in the form of a name and a list of arguments):
+
+- export: as, hide, show, uri
+- import: as, hide, show, uri
+- class: extends, implemwnts, mixins, name
+- render: name, params
+
+The `import` and `export` directives are used for import and export and follow the same Dart language directives.  
+They support the following options: `as`, `hide`, `show` and `uri`.
+
+```html
+<%== tagDir %> import uri="package:path/path.dart" as="_path" <%== tagEnd %>
+<%== tagDir %> import uri="foo.dart" show="Bar" hide="Baz" <%== tagEnd %>
+<%== tagDir %> export uri="../view.dart" <%== tagEnd %>
+```
+
+The `class` directive is used to specify a template class name and class inheritance options.  
+The class name can be specified via the `name` option.  
+Supported class inheritance options include `extends`, `implements`, `mixins`.
+
+```html
+<%== tagDir %> class extends="View" <%== tagEnd %>
+```
+
+The render directive is used to specify the name of the render method and its parameters.  
+The method name can be specified via the `name` option.  
+The method parameters can be specified via the `params` option.  
+
+```html
+<%== tagDir %> render params="List<Product> products, HttpRequest request" <%== tagEnd %>
+```
+
+### Usage
+
+To be continued...
