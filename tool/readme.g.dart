@@ -173,7 +173,7 @@ class readme {
     out.write('\n');
     out.write('- export: as, hide, show, uri\n');
     out.write('- import: as, hide, show, uri\n');
-    out.write('- class: extends, implemwnts, mixins, name\n');
+    out.write('- class: extends, implements, mixins, name\n');
     out.write('- render: name, params\n');
     out.write('\n');
     out.write(

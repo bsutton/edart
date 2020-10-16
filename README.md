@@ -93,7 +93,7 @@ List of compiler directives (in the form of a name and a list of arguments):
 
 - export: as, hide, show, uri
 - import: as, hide, show, uri
-- class: extends, implemwnts, mixins, name
+- class: extends, implements, mixins, name
 - render: name, params
 
 The `import` and `export` directives are used for import and export and follow the same Dart language directives.  
