@@ -3,7 +3,7 @@
 
 Embedded Dart template engine and compiler. Compiles templates to Dart source code.
 
-Version: 0.1.2
+Version: 0.1.3
 
 ### Warning
 
@@ -209,19 +209,19 @@ Also possible to compile the templates via `build_runner`
 </head>
 
 <body>
-    <% out.write(header_html().render(title)); %>
+    <%== header_html().render(title) %>
 
-    <% out.write(nav_html().render(request)); %>
+    <%== nav_html().render(request) %>
 
     <div class="w3-container">
-        <% out.write(breadcrumbs_html().render(breadcrumbs)); %>
+        <%== breadcrumbs_html().render(breadcrumbs) %>
     </div>
 
     <div class="w3-container">
         <%== body %>
     </div>
 
-    <% out.write(footer_html().render()); %>
+    <%== footer_html().render() %>
 
 </body>
 

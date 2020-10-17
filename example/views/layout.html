@@ -19,19 +19,19 @@
 </head>
 
 <body>
-    <% out.write(header_html().render(title)); %>
+    <%== header_html().render(title) %>
 
-    <% out.write(nav_html().render(request)); %>
+    <%== nav_html().render(request) %>
 
     <div class="w3-container">
-        <% out.write(breadcrumbs_html().render(breadcrumbs)); %>
+        <%== breadcrumbs_html().render(breadcrumbs) %>
     </div>
 
     <div class="w3-container">
         <%== body %>
     </div>
 
-    <% out.write(footer_html().render()); %>
+    <%== footer_html().render() %>
 
 </body>
 

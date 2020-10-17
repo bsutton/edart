@@ -29,12 +29,18 @@ class layout_html extends Layout {
     out.write('</head>\n');
     out.write('\n');
     out.write('<body>\n');
+    out.write('    ');
     out.write(header_html().render(title));
     out.write('\n');
+    out.write('\n');
+    out.write('    ');
     out.write(nav_html().render(request));
     out.write('\n');
+    out.write('\n');
     out.write('    <div class="w3-container">\n');
+    out.write('        ');
     out.write(breadcrumbs_html().render(breadcrumbs));
+    out.write('\n');
     out.write('    </div>\n');
     out.write('\n');
     out.write('    <div class="w3-container">\n');
@@ -43,7 +49,9 @@ class layout_html extends Layout {
     out.write('\n');
     out.write('    </div>\n');
     out.write('\n');
+    out.write('    ');
     out.write(footer_html().render());
+    out.write('\n');
     out.write('\n');
     out.write('</body>\n');
     out.write('\n');
