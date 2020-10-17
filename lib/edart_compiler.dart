@@ -1,11 +1,56 @@
 import 'dart:collection';
 
-import 'package:code_builder/code_builder.dart';
+import 'package:code_builder/code_builder.dart' as _cb;
 import 'package:dart_style/dart_style.dart';
+import 'package:edart/edart_parser.dart';
 import 'package:edart/fragment.dart';
 
+import 'package:meta/meta.dart';
+
 class EdartCompiler {
-  String compile(String filename, String classname, List<Fragment> fragments) {
+  String compile(
+      {@required String classname,
+      @required String filename,
+      @required String source}) {
+    if (classname == null) {
+      throw ArgumentError.notNull('classname');
+    }
+
+    if (filename == null) {
+      throw ArgumentError.notNull('filename');
+    }
+
+    if (source == null) {
+      throw ArgumentError.notNull('source');
+    }
+
+    final parser = EdartParser();
+    final fragments = parser.parse(source) as List<Fragment>;
+    if (parser.error != null) {
+      throw parser.error;
+    }
+
+    final result = compileFragments(
+        classname: classname, filename: filename, fragments: fragments);
+    return result;
+  }
+
+  String compileFragments(
+      {@required String classname,
+      @required String filename,
+      @required List<Fragment> fragments}) {
+    if (classname == null) {
+      throw ArgumentError.notNull('classname');
+    }
+
+    if (fragments == null) {
+      throw ArgumentError.notNull('fragments');
+    }
+
+    if (filename == null) {
+      throw ArgumentError.notNull('filename');
+    }
+
     fragments = _prepare(fragments);
     final classOptions = {'name': classname};
     final renderOptions = {'name': 'render'};
@@ -146,8 +191,8 @@ class EdartCompiler {
   }
 
   String _literal(String value) {
-    final emitter = DartEmitter();
-    return literal(value).accept(emitter).toString();
+    final emitter = _cb.DartEmitter();
+    return _cb.literal(value).accept(emitter).toString();
   }
 
   List<Fragment> _prepare(List<Fragment> fragments) {

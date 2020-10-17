@@ -229,6 +229,16 @@ class readme {
     out.write('\n');
     out.write('`dart pub global run edart infile outfile`\n');
     out.write('\n');
+    out.write('Compiling the template via Dart scrpt (example).\n');
+    out.write('\n');
+    out.write('```dart\n');
+    out.write(File('tool/build.dart').readAsStringSync());
+    out.write('\n');
+    out.write('\n');
+    out.write('```\n');
+    out.write('\n');
+    out.write('Also possible to compile the templates via `build_runner`\n');
+    out.write('\n');
     out.write('### Examples\n');
     final files = [
       'example/views/nav.html',

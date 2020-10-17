@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:edart/edart_compiler.dart';
-import 'package:edart/edart_parser.dart';
-import 'package:edart/fragment.dart';
 import 'package:path/path.dart' as _path;
 
 Future<void> main(List<String> args) async {
@@ -29,15 +27,9 @@ Future<void> main(List<String> args) async {
   }
 
   final text = file.readAsStringSync();
-  final parser = EdartParser();
-  final fragments = parser.parse(text) as List<Fragment>;
-  if (parser.error != null) {
-    print(parser.error);
-    exit(-1);
-  }
-
   final classname = _path.basename(infile).replaceAll('.', '_');
   final compiler = EdartCompiler();
-  final code = compiler.compile(infile, classname, fragments);
+  final code =
+      compiler.compile(classname: classname, filename: infile, source: text);
   File(outfile).writeAsStringSync(code);
 }

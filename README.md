@@ -131,6 +131,31 @@ Compiling the template
 
 `dart pub global run edart infile outfile`
 
+Compiling the template via Dart scrpt (example).
+
+```dart
+import 'dart:io';
+
+import 'package:edart/edart_compiler.dart';
+import 'package:path/path.dart' as _path;
+
+Future<void> build(List<String> files) async {
+  for (final path in files) {
+    final file = File(path);
+    final source = file.readAsStringSync();
+    final classname = _path.basename(path).replaceAll('.', '_');
+    final compiler = EdartCompiler();
+    final code =
+        compiler.compile(classname: classname, filename: path, source: source);
+    File(path + '.g.dart').writeAsStringSync(code);
+  }
+}
+
+
+```
+
+Also possible to compile the templates via `build_runner`
+
 ### Examples
 
 `example/views/nav.html`

@@ -141,6 +141,15 @@ Compiling the template
 
 `dart pub global run edart infile outfile`
 
+Compiling the template via Dart scrpt (example).
+
+```dart
+<%== File('tool/build.dart').readAsStringSync() %>
+
+```
+
+Also possible to compile the templates via `build_runner`
+
 ### Examples
 <%
 final files = [
