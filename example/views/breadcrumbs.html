@@ -1,0 +1,19 @@
+<%@ import uri="../breadcrumb.dart" %>
+<%@ render params="List<Breadcrumb> breadcrumbs" %>
+<p>
+  <%
+if (breadcrumbs.isNotEmpty) {
+  %><a href="/">Home</a>&nbsp;/&nbsp;<%
+  final last = breadcrumbs.last;
+  for (final item in breadcrumbs) {
+    if (item != last) {
+      %><a href="<%== item.url %>"><%= item.text %></a>&nbsp;/&nbsp;<%
+    } else {
+      %><%= item.text %><%
+    }
+  }
+} else {
+  %>Home<%
+}
+%>
+</p>

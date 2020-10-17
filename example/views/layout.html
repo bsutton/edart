@@ -1,25 +1,31 @@
-<%@ import uri="layout.dart" %>
-<%@ import uri="header.html.g.dart" %>
+<%@ import uri="../layout.dart" %>
+<%@ import uri="breadcrumbs.html.g.dart" %>
 <%@ import uri="footer.html.g.dart" %>
+<%@ import uri="header.html.g.dart" %>
 <%@ import uri="nav.html.g.dart" %>
-<%@ export uri="view.dart" %>
+<%@ export uri="../view.dart" %>
+<%@ export uri="../breadcrumb.dart" %>
 <%@ class extends="Layout" %>
 <%@ render params="StringBuffer body, HttpRequest request" %>
 <html>
 
 <head>
     <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <% for (final meta in metas) { %>
     <meta <%= HtmlUtils.attrs(meta) %> />
     <% } %>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
 <body>
     <% out.write(header_html().render(title)); %>
 
     <% out.write(nav_html().render(request)); %>
+
+    <div class="w3-container">
+        <% out.write(breadcrumbs_html().render(breadcrumbs)); %>
+    </div>
 
     <div class="w3-container">
         <%== body %>

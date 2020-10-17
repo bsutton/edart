@@ -6,8 +6,6 @@ import '../site_menu.dart';
 class nav_html {
   String render(HttpRequest request) {
     final out = StringBuffer();
-    // ignore: unused_element
-    String _$e(v) => const HtmlEscape().convert(v.toString());
     out.write('<div class="w3-bar w3-black">\n');
     final url = request.requestedUri.path;
     String getClass(MenuItem item, MenuItem active) {
@@ -27,7 +25,7 @@ class nav_html {
       out.write(getClass(item, active));
       out.write('">\n');
       out.write('        ');
-      out.write(_$e(item.name));
+      out.write(htmlEscape.convert('${item.name}'));
       out.write('\n');
       out.write('    </a>\n');
     }

@@ -7,12 +7,13 @@
 </p>
 <ul class="w3-ul">
     <% for (final product in products) { %>
-    <li><%= product.name %>&nbsp;<%= product.price %></li>
-    <% } %>
+    <li><%= product.name %>&nbsp;<%= product.price %></li><%
+    } %>
 </ul>
 <%
 final layout = layout_html();
 layout.title = 'Products';
 layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.addBreadcrumb('Products', request.requestedUri.toString());
 layout.render(out, request);
 %>

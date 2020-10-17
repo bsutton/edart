@@ -6,7 +6,7 @@ const tagCod = '<%';
 final tagDir = '<%@';
 final tagExp = '<%=';
 final tagRaw = '<%==';
-final tagEnd = '%' + '>';
+final tagEnd = '%' '>';
 %>
 # <%= pubspec.name %>  
 =======

@@ -3,7 +3,7 @@
 
 Embedded Dart template engine and compiler. Compiles templates to Dart source code.
 
-Version: 0.1.1
+Version: 0.1.2
 
 ### Warning
 
@@ -188,28 +188,34 @@ Also possible to compile the templates via `build_runner`
 `example/views/layout.html`
 
 ```html
-<%@ import uri="layout.dart" %>
-<%@ import uri="header.html.g.dart" %>
+<%@ import uri="../layout.dart" %>
+<%@ import uri="breadcrumbs.html.g.dart" %>
 <%@ import uri="footer.html.g.dart" %>
+<%@ import uri="header.html.g.dart" %>
 <%@ import uri="nav.html.g.dart" %>
-<%@ export uri="view.dart" %>
+<%@ export uri="../view.dart" %>
+<%@ export uri="../breadcrumb.dart" %>
 <%@ class extends="Layout" %>
 <%@ render params="StringBuffer body, HttpRequest request" %>
 <html>
 
 <head>
     <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <% for (final meta in metas) { %>
     <meta <%= HtmlUtils.attrs(meta) %> />
     <% } %>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
 <body>
     <% out.write(header_html().render(title)); %>
 
     <% out.write(nav_html().render(request)); %>
+
+    <div class="w3-container">
+        <% out.write(breadcrumbs_html().render(breadcrumbs)); %>
+    </div>
 
     <div class="w3-container">
         <%== body %>
@@ -242,13 +248,14 @@ response.write(out);
 </p>
 <ul class="w3-ul">
     <% for (final product in products) { %>
-    <li><%= product.name %>&nbsp;<%= product.price %></li>
-    <% } %>
+    <li><%= product.name %>&nbsp;<%= product.price %></li><%
+    } %>
 </ul>
 <%
 final layout = layout_html();
 layout.title = 'Products';
 layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.addBreadcrumb('Products', request.requestedUri.toString());
 layout.render(out, request);
 %>
 ```

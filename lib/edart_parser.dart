@@ -398,7 +398,7 @@ class EdartParser {
       Fragment $6;
       final $7 = _c;
       final $8 = _pos;
-      _parse$Terminal15(false, false);
+      _parse$Terminal16(false, false);
       if (_success) {
         final $10 = _parseDirective(false, true);
         if (_success) {
@@ -424,15 +424,17 @@ class EdartParser {
       Fragment $12;
       final $13 = _c;
       final $14 = _pos;
-      _parse$Terminal14(false, false);
+      _parse$Terminal15(false, false);
       if (_success) {
-        final $16 = _parse_source(false, true);
-        _parseClosedTag(false, false);
+        final $16 = _parse_expression(false, true);
         if (_success) {
-          final s = $16;
-          Fragment $$;
-          $$ = Fragment.raw(s);
-          $12 = $$;
+          _parseClosedTag(false, false);
+          if (_success) {
+            final e = $16;
+            Fragment $$;
+            $$ = Fragment.raw(e);
+            $12 = $$;
+          }
         }
         if (!_success) {
           _c = $13;
@@ -448,15 +450,17 @@ class EdartParser {
       Fragment $18;
       final $19 = _c;
       final $20 = _pos;
-      _parse$Terminal13(false, false);
+      _parse$Terminal14(false, false);
       if (_success) {
-        final $22 = _parse_source(false, true);
-        _parseClosedTag(false, false);
+        final $22 = _parse_expression(false, true);
         if (_success) {
-          final s = $22;
-          Fragment $$;
-          $$ = Fragment.expression(s);
-          $18 = $$;
+          _parseClosedTag(false, false);
+          if (_success) {
+            final e = $22;
+            Fragment $$;
+            $$ = Fragment.expression(e);
+            $18 = $$;
+          }
         }
         if (!_success) {
           _c = $19;
@@ -614,6 +618,84 @@ class EdartParser {
     $2 = $7;
     if (!_success && _error <= _failure) {
       _fail(const ['\'eof\'']);
+    }
+    return $2;
+  }
+
+  String _parse_expression(bool $0, bool $1) {
+    String $2;
+    final $3 = _pos;
+    String $7;
+    String $10;
+    final $12 = $1;
+    $1 = false;
+    List $21;
+    if ($1) {
+      $21 = [];
+    }
+    var $22 = false;
+    for (;;) {
+      dynamic $23;
+      final $24 = _pos;
+      final $25 = _c;
+      dynamic $28;
+      final $33 = _error;
+      final $34 = _expected;
+      final $35 = _failure;
+      final $36 = $1;
+      $1 = false;
+      if (_c == 37) {
+        _matchString('%>');
+      } else {
+        _success = false;
+        _failure = _pos;
+      }
+      _success = !_success;
+      _c = $25;
+      _pos = $24;
+      _error = $33;
+      _expected = $34;
+      _failure = $35;
+      $1 = $36;
+      var $38;
+      if (_success) {
+        if (_c >= 0 && _c <= 1114111) {
+          _success = true;
+          _c = _input[_pos += _c <= 65535 ? 1 : 2];
+        } else {
+          _success = false;
+          _failure = _pos;
+        }
+        if (_success) {
+          $28 = $38;
+        } else {
+          _c = $25;
+          _pos = $24;
+        }
+      }
+      $23 = $28;
+      if (!_success) {
+        _success = $22;
+        if (!_success) {
+          $21 = null;
+        }
+        break;
+      }
+      if ($1) {
+        $21.add($23);
+      }
+      $22 = true;
+    }
+    $1 = $12;
+    if ($1) {
+      $10 = _text.substring($3, _pos);
+    }
+    if (_success) {
+      $7 = $10;
+    }
+    $2 = $7;
+    if (!_success && _error <= _failure) {
+      _fail(const ['\'expression\'']);
     }
     return $2;
   }
@@ -928,7 +1010,7 @@ class EdartParser {
     return $2;
   }
 
-  String _parse$Terminal13(bool $0, bool $1) {
+  String _parse$Terminal14(bool $0, bool $1) {
     String $2;
     String $7;
     String $10;
@@ -949,7 +1031,7 @@ class EdartParser {
     return $2;
   }
 
-  String _parse$Terminal14(bool $0, bool $1) {
+  String _parse$Terminal15(bool $0, bool $1) {
     String $2;
     String $7;
     String $10;
@@ -970,7 +1052,7 @@ class EdartParser {
     return $2;
   }
 
-  String _parse$Terminal15(bool $0, bool $1) {
+  String _parse$Terminal16(bool $0, bool $1) {
     String $2;
     String $7;
     String $10;

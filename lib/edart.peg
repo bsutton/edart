@@ -11,8 +11,8 @@ Fragments =
 Fragment
 Fragment =
   '<%@' d:Directive ClosedTag { $$ = Fragment.directive(d); }
-  / '<%==' s:'source' ClosedTag { $$ = Fragment.raw(s); }
-  / '<%=' s:'source' ClosedTag { $$ = Fragment.expression(s); }
+  / '<%==' e:'expression' ClosedTag { $$ = Fragment.raw(e); }
+  / '<%=' e:'expression' ClosedTag { $$ = Fragment.expression(e); }
   / '<%' s:'source' ClosedTag { $$ = Fragment.code(s); }
   / s:'text' { $$ = Fragment.text(s); }
   ;
@@ -39,6 +39,10 @@ Attribute =
 # Terminals
 'eof' =
   @eof
+  ;
+
+'expression' =
+  <(!"%>" .)+>
   ;
 
 'indentifier' =

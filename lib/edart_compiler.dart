@@ -145,10 +145,6 @@ class EdartCompiler {
 
     code.writeln(') {');
     code.writeln('final out = StringBuffer();');
-    final esc = '_\$e';
-    code.writeln('  // ignore: unused_element');
-    code.writeln(
-        'String ${esc}(v) => const HtmlEscape().convert(v.toString());');
     for (final fragment in fragments) {
       final source = fragment.source;
       switch (fragment.type) {
@@ -156,11 +152,14 @@ class EdartCompiler {
           code.writeln(source.trim());
           break;
         case FragmentType.expression:
-          code.write('out.write(');
-          code.write(esc);
-          code.write('(');
-          code.write(source.trim());
-          code.writeln('));');
+          final expression = source.trim();
+          if (expression.isNotEmpty) {
+            code.write('out.write(');
+            code.write('htmlEscape.convert(\'\${');
+            code.write(expression);
+            code.writeln('}\'));');
+          }
+
           break;
         case FragmentType.raw:
           code.write('out.write(');

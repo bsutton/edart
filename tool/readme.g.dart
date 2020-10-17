@@ -6,23 +6,21 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 class readme {
   String render(Pubspec pubspec) {
     final out = StringBuffer();
-    // ignore: unused_element
-    String _$e(v) => const HtmlEscape().convert(v.toString());
     const tagCod = '<%';
     final tagDir = '<%@';
     final tagExp = '<%=';
     final tagRaw = '<%==';
-    final tagEnd = '%' + '>';
+    final tagEnd = '%' '>';
     out.write('# ');
-    out.write(_$e(pubspec.name));
+    out.write(htmlEscape.convert('${pubspec.name}'));
     out.write('  \n');
     out.write('=======\n');
     out.write('\n');
-    out.write(_$e(pubspec.description));
+    out.write(htmlEscape.convert('${pubspec.description}'));
     out.write('\n');
     out.write('\n');
     out.write('Version: ');
-    out.write(_$e(pubspec.version));
+    out.write(htmlEscape.convert('${pubspec.version}'));
     out.write('\n');
     out.write('\n');
     out.write('### Warning\n');
