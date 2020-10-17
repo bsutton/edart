@@ -18,7 +18,6 @@ Version: <%= pubspec.version %>
 ### Warning
 
 *This software is under development.*  
-*Support for a typical build system for Dart (build_runner) will be added in the near future.*
 
 ### About
 
@@ -60,7 +59,7 @@ The sequence of characters `<%== tagEnd %>` is used as the closing tag.
 ### Tags
 
 The `<%== tagCod %>` tag is used to add (embed) source code to the template (to the template source code).  
-Any leading spaces from the beginning of the line before the opening tag `<%== tagCod %>` will be removed.  
+Preceding spaces before the opening tag `<%== tagCod %>` will be removed.  
 If a `newline` immediately follows the closing tag `<%== tagEnd %>`, a `newline` will be removed.
 
 ```html
@@ -87,10 +86,11 @@ The value of the expression will be output as is (no escaping).
 ```
 
 The `<%== tagDir %>` tag is used to specify template compiler directives.  
-Any leading spaces from the beginning of the line before the opening tag `<%== tagDir %>` will be removed.  
+Preceding spaces before the opening tag `<%== tagDir %>` will be removed.  
 If a `newline` immediately follows the closing tag `<%== tagEnd %>`, a `newline` will be removed.
 
-Template compiler directive format.  
+Template compiler directive format:
+
 `<%== tagDir %> directive option1="value1" option2="value2" <%== tagEnd %>`
 
 ```html
@@ -133,4 +133,26 @@ The method parameters can be specified via the `params` option.
 
 ### Usage
 
-To be continued...
+Compiler activation.
+
+`dart pub global activate edart`
+
+Compiling the template
+
+`dart pub global run edart infile outfile`
+
+### Examples
+<%
+final files = [
+  'example/views/nav.html',
+  'example/views/layout.html',
+  'example/views/products_index.html',];
+for (final file in files) { %>
+
+`<%== file %>`
+
+```html
+<% out.write(File(file).readAsStringSync()); %>
+
+```
+<% } %>

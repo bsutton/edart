@@ -36,11 +36,6 @@ Future<void> main(List<String> args) async {
     exit(-1);
   }
 
-  for (final f in fragments) {
-    print(f.type);
-    print(f.source);
-  }
-
   final classname = _path.basename(infile).replaceAll('.', '_');
   final compiler = EdartCompiler();
   final code = compiler.compile(infile, classname, fragments);

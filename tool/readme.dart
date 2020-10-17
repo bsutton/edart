@@ -28,6 +28,8 @@ class readme {
     out.write('### Warning\n');
     out.write('\n');
     out.write('*This software is under development.*  \n');
+    out.write(
+        '*Support for a typical build system for Dart (build_runner) will be added in the near future.*\n');
     out.write('\n');
     out.write('### About\n');
     out.write('\n');
@@ -92,7 +94,8 @@ class readme {
     out.write(tagCod);
     out.write(
         '` tag is used to add (embed) source code to the template (to the template source code).  \n');
-    out.write('Preceding spaces before the opening tag `');
+    out.write(
+        'Any leading spaces from the beginning of the line before the opening tag `');
     out.write(tagCod);
     out.write('` will be removed.  \n');
     out.write('If a `newline` immediately follows the closing tag `');
@@ -141,15 +144,15 @@ class readme {
     out.write('The `');
     out.write(tagDir);
     out.write('` tag is used to specify template compiler directives.  \n');
-    out.write('Preceding spaces before the opening tag `');
+    out.write(
+        'Any leading spaces from the beginning of the line before the opening tag `');
     out.write(tagDir);
     out.write('` will be removed.  \n');
     out.write('If a `newline` immediately follows the closing tag `');
     out.write(tagEnd);
     out.write('`, a `newline` will be removed.\n');
     out.write('\n');
-    out.write('Template compiler directive format:\n');
-    out.write('\n');
+    out.write('Template compiler directive format.  \n');
     out.write('`');
     out.write(tagDir);
     out.write(' directive option1="value1" option2="value2" ');
@@ -221,31 +224,7 @@ class readme {
     out.write('\n');
     out.write('### Usage\n');
     out.write('\n');
-    out.write('Compiler activation.\n');
-    out.write('\n');
-    out.write('`dart pub global activate edart`\n');
-    out.write('\n');
-    out.write('Compiling the template\n');
-    out.write('\n');
-    out.write('`dart pub global run edart infile outfile`\n');
-    out.write('\n');
-    out.write('### Examples\n');
-    final files = [
-      'example/views/nav.html',
-      'example/views/layout.html',
-      'example/views/products_index.html',
-    ];
-    for (final file in files) {
-      out.write('\n');
-      out.write('`');
-      out.write(file);
-      out.write('`\n');
-      out.write('\n');
-      out.write('```html\n');
-      out.write(File(file).readAsStringSync());
-      out.write('\n');
-      out.write('```\n');
-    }
+    out.write('To be continued...');
     return out.toString();
   }
 }

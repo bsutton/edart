@@ -1,0 +1,14 @@
+builders:
+  edart:
+    target: ":edart"
+    import: "package:edart/edart_builder.dart"
+    builder_factories: ["edartBuilder"]
+    build_extensions: {".html": [".html.g.dart"]}
+    auto_apply: root_package
+    build_to: source
+targets:
+  $default:
+    builders:
+      edart:
+        generate_for:
+        - example/views/**.html

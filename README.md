@@ -1,14 +1,13 @@
 # edart  
 =======
 
-Embedded Dart template engine and compiler.
+Embedded Dart template engine and compiler. Compiles templates to Dart source code.
 
-Version: 0.1.0
+Version: 0.1.1
 
 ### Warning
 
 *This software is under development.*  
-*Support for a typical build system for Dart (build_runner) will be added in the near future.*
 
 ### About
 
@@ -50,7 +49,7 @@ The sequence of characters `%>` is used as the closing tag.
 ### Tags
 
 The `<%` tag is used to add (embed) source code to the template (to the template source code).  
-Any leading spaces from the beginning of the line before the opening tag `<%` will be removed.  
+Preceding spaces before the opening tag `<%` will be removed.  
 If a `newline` immediately follows the closing tag `%>`, a `newline` will be removed.
 
 ```html
@@ -77,10 +76,11 @@ The value of the expression will be output as is (no escaping).
 ```
 
 The `<%@` tag is used to specify template compiler directives.  
-Any leading spaces from the beginning of the line before the opening tag `<%@` will be removed.  
+Preceding spaces before the opening tag `<%@` will be removed.  
 If a `newline` immediately follows the closing tag `%>`, a `newline` will be removed.
 
-Template compiler directive format.  
+Template compiler directive format:
+
 `<%@ directive option1="value1" option2="value2" %>`
 
 ```html
@@ -123,4 +123,107 @@ The method parameters can be specified via the `params` option.
 
 ### Usage
 
-To be continued...
+Compiler activation.
+
+`dart pub global activate edart`
+
+Compiling the template
+
+`dart pub global run edart infile outfile`
+
+### Examples
+
+`example/views/nav.html`
+
+```html
+<%@ import uri="dart:io" %>
+<%@ import uri="../site_menu.dart" %>
+<%@ render params="HttpRequest request" %>
+<div class="w3-bar w3-black">
+    <%
+    final url = request.requestedUri.path;
+    String getClass(MenuItem item, MenuItem active) {
+        final result = ['w3-bar-item', 'w3-button'];
+        if (item == active) {
+            result.add('w3-red');
+        }
+        return result.join(' ');
+    }
+
+    final menu = Menu.main;
+    final active = menu.findActive(url);
+    for (final item in menu.items) { %>
+    <a href="<%== item.url %>" class="<%== getClass(item, active) %>">
+        <%= item.name %>
+    </a>
+    <% } %>
+</div>
+```
+
+`example/views/layout.html`
+
+```html
+<%@ import uri="layout.dart" %>
+<%@ import uri="header.html.g.dart" %>
+<%@ import uri="footer.html.g.dart" %>
+<%@ import uri="nav.html.g.dart" %>
+<%@ export uri="view.dart" %>
+<%@ class extends="Layout" %>
+<%@ render params="StringBuffer body, HttpRequest request" %>
+<html>
+
+<head>
+    <title><%= title %></title>
+    <% for (final meta in metas) { %>
+    <meta <%= HtmlUtils.attrs(meta) %> />
+    <% } %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+
+<body>
+    <% out.write(header_html().render(title)); %>
+
+    <% out.write(nav_html().render(request)); %>
+
+    <div class="w3-container">
+        <%== body %>
+    </div>
+
+    <% out.write(footer_html().render()); %>
+
+</body>
+
+</html>
+<%
+body.clear();
+body.write(out);
+final response = request.response;
+response.headers.add('Content-Type', 'text/html; charset=utf-8');
+response.statusCode = 400;
+response.write(out);
+%>
+```
+
+`example/views/products_index.html`
+
+```html
+<%@ import uri="layout.html.g.dart" %>
+<%@ import uri="../models/product.dart" %>
+<%@ class extends="View" %>
+<%@ render params="List<Product> products, HttpRequest request" %>
+<p>
+    Our cool products list
+</p>
+<ul class="w3-ul">
+    <% for (final product in products) { %>
+    <li><%= product.name %>&nbsp;<%= product.price %></li>
+    <% } %>
+</ul>
+<%
+final layout = layout_html();
+layout.title = 'Products';
+layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.render(out, request);
+%>
+```
