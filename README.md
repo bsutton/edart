@@ -162,7 +162,7 @@ Also possible to compile the templates via `build_runner`
 
 ```html
 <%@ import uri="dart:io" %>
-<%@ import uri="../site_menu.dart" %>
+<%@ import uri="../site/site_menu.dart" %>
 <%@ render params="HttpRequest request" %>
 <div class="w3-bar w3-black">
     <%
@@ -188,40 +188,41 @@ Also possible to compile the templates via `build_runner`
 `example/views/layout.html`
 
 ```html
-<%@ import uri="../layout.dart" %>
+<%@ import uri="../html/layout.dart" %>
 <%@ import uri="breadcrumbs.html.g.dart" %>
 <%@ import uri="footer.html.g.dart" %>
 <%@ import uri="header.html.g.dart" %>
 <%@ import uri="nav.html.g.dart" %>
-<%@ export uri="../view.dart" %>
-<%@ export uri="../breadcrumb.dart" %>
+<%@ export uri="../html/breadcrumb.dart" %>
+<%@ export uri="../html/html_utils.dart" %>
+<%@ export uri="../html/view.dart" %>
 <%@ class extends="Layout" %>
-<%@ render params="StringBuffer body, HttpRequest request" %>
+<%@ render params="StringBuffer body, HttpRequest request, {int statusCode: 400}" %>
 <html>
 
 <head>
-    <title><%= title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <% for (final meta in metas) { %>
-    <meta <%= HtmlUtils.attrs(meta) %> />
-    <% } %>
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <% for (final tag in tags) { %>
+  <%== tag %>
+  <% } %>
 </head>
 
 <body>
-    <%== header_html().render(title) %>
+  <%== header_html().render(title) %>
 
-    <%== nav_html().render(request) %>
+  <%== nav_html().render(request) %>
 
-    <div class="w3-container">
-        <%== breadcrumbs_html().render(breadcrumbs) %>
-    </div>
+  <div class="w3-container">
+    <%== breadcrumbs_html().render(breadcrumbs) %>
+  </div>
 
-    <div class="w3-container">
-        <%== body %>
-    </div>
+  <div class="w3-container">
+    <%== body %>
+  </div>
 
-    <%== footer_html().render() %>
+  <%== footer_html().render() %>
 
 </body>
 
@@ -231,7 +232,7 @@ body.clear();
 body.write(out);
 final response = request.response;
 response.headers.add('Content-Type', 'text/html; charset=utf-8');
-response.statusCode = 400;
+response.statusCode = statusCode;
 response.write(out);
 %>
 ```
@@ -254,7 +255,7 @@ response.write(out);
 <%
 final layout = layout_html();
 layout.title = 'Products';
-layout.addMeta({'description': 'MegaSuperShop cool price list'});
+layout.addTag(HtmlTag('meta', {'description': 'MegaSuperShop cool price list'}));
 layout.addBreadcrumb('Products', request.requestedUri.toString());
 layout.render(out, request);
 %>

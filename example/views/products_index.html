@@ -13,7 +13,7 @@
 <%
 final layout = layout_html();
 layout.title = 'Products';
-layout.addTag('meta', {'description': 'MegaSuperShop cool price list'});
+layout.addTag(HtmlTag('meta', {'description': 'MegaSuperShop cool price list'}));
 layout.addBreadcrumb('Products', request.requestedUri.toString());
 layout.render(out, request);
 %>

@@ -1,5 +1,5 @@
 import 'breadcrumb.dart';
-import 'html_tag.dart';
+import 'html_utils.dart';
 
 export 'dart:io';
 
@@ -15,12 +15,10 @@ class Layout {
 
   void addBreadcrumb(String text, String url) {
     final item = Breadcrumb(text: text, url: url);
-
     breadcrumbs.add(item);
   }
 
-  HtmlTag addTag(String name, [Map<String, String> attributes]) {
-    final tag = HtmlTag(name, attributes);
+  HtmlTag addTag(HtmlTag tag) {
     tags.add(tag);
     return tag;
   }

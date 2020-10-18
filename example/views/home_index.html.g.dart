@@ -12,7 +12,8 @@ class home_index_html extends View {
     out.write('</p>\n');
     final layout = layout_html();
     layout.title = 'Home page';
-    layout.addTag('meta', {'description': 'MegaSuperShop cool price list'});
+    layout.addTag(
+        HtmlTag('meta', {'description': 'MegaSuperShop cool price list'}));
     layout.render(out, request);
     return out.toString();
   }

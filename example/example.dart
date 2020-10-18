@@ -13,7 +13,7 @@ Future<void> main() async {
     try {
       await _handle(request);
     } catch (e) {
-      response.write('Internal server error');
+      response.write(e);
     } finally {
       await response.close();
     }

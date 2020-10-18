@@ -3,43 +3,36 @@
 <%@ import uri="footer.html.g.dart" %>
 <%@ import uri="header.html.g.dart" %>
 <%@ import uri="nav.html.g.dart" %>
-<%@ export uri="../html/view.dart" %>
 <%@ export uri="../html/breadcrumb.dart" %>
+<%@ export uri="../html/html_utils.dart" %>
+<%@ export uri="../html/view.dart" %>
 <%@ class extends="Layout" %>
 <%@ render params="StringBuffer body, HttpRequest request, {int statusCode: 400}" %>
 <html>
 
 <head>
-    <title><%= title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <% for (final tag in tags) {
-      if (tag.value.isEmpty) {
-        %><<%== tag.name %> <%= HtmlUtils.attrs(tag.attributes) %>><%
-      } else {
-        %>
-        <<%== tag.name %> <%= HtmlUtils.attrs(tag.attributes) %> />
-        <%== tag.value %>
-    </<%== tag.name %>><%
-      }
-    }
-    %>
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <% for (final tag in tags) { %>
+  <%== tag %>
+  <% } %>
 </head>
 
 <body>
-    <%== header_html().render(title) %>
+  <%== header_html().render(title) %>
 
-    <%== nav_html().render(request) %>
+  <%== nav_html().render(request) %>
 
-    <div class="w3-container">
-        <%== breadcrumbs_html().render(breadcrumbs) %>
-    </div>
+  <div class="w3-container">
+    <%== breadcrumbs_html().render(breadcrumbs) %>
+  </div>
 
-    <div class="w3-container">
-        <%== body %>
-    </div>
+  <div class="w3-container">
+    <%== body %>
+  </div>
 
-    <%== footer_html().render() %>
+  <%== footer_html().render() %>
 
 </body>
 

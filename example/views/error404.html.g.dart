@@ -7,7 +7,7 @@ class error404_html {
     final out = StringBuffer();
     out.write('Page not found\n');
     final layout = layout_html();
-    layout.addTag('meta', {'description': 'Error 404'});
+    layout.addTag(HtmlTag('meta', {'description': 'Error 404'}));
     layout.render(out, request, statusCode: 404);
     return out.toString();
   }
