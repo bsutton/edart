@@ -20,7 +20,7 @@ class products_index_html extends View {
     out.write('</ul>\n');
     final layout = layout_html();
     layout.title = 'Products';
-    layout.addMeta({'description': 'MegaSuperShop cool price list'});
+    layout.addTag('meta', {'description': 'MegaSuperShop cool price list'});
     layout.addBreadcrumb('Products', request.requestedUri.toString());
     layout.render(out, request);
     return out.toString();

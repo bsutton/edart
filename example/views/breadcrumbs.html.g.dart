@@ -1,6 +1,6 @@
 // ignore: unused_import
 import 'dart:convert';
-import '../breadcrumb.dart';
+import '../html/breadcrumb.dart';
 
 class breadcrumbs_html {
   String render(List<Breadcrumb> breadcrumbs) {

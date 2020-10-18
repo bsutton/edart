@@ -1,15 +1,15 @@
 // ignore: unused_import
 import 'dart:convert';
-import '../layout.dart';
+import '../html/layout.dart';
 import 'breadcrumbs.html.g.dart';
 import 'footer.html.g.dart';
 import 'header.html.g.dart';
 import 'nav.html.g.dart';
-export '../view.dart';
-export '../breadcrumb.dart';
+export '../html/view.dart';
+export '../html/breadcrumb.dart';
 
 class layout_html extends Layout {
-  String render(StringBuffer body, HttpRequest request) {
+  String render(StringBuffer body, HttpRequest request, {int statusCode: 400}) {
     final out = StringBuffer();
     out.write('<html>\n');
     out.write('\n');
@@ -21,12 +21,28 @@ class layout_html extends Layout {
         '    <meta name="viewport" content="width=device-width, initial-scale=1">\n');
     out.write(
         '    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">\n');
-    for (final meta in metas) {
-      out.write('    <meta ');
-      out.write(htmlEscape.convert('${HtmlUtils.attrs(meta)}'));
-      out.write(' />\n');
+    for (final tag in tags) {
+      if (tag.value.isEmpty) {
+        out.write('<');
+        out.write(tag.name);
+        out.write(' ');
+        out.write(htmlEscape.convert('${HtmlUtils.attrs(tag.attributes)}'));
+        out.write('>');
+      } else {
+        out.write('<');
+        out.write(tag.name);
+        out.write(' ');
+        out.write(htmlEscape.convert('${HtmlUtils.attrs(tag.attributes)}'));
+        out.write('/>\n');
+        out.write('          ');
+        out.write(tag.value);
+        out.write('\n');
+        out.write('        </');
+        out.write(tag.name);
+        out.write('>');
+      }
     }
-    out.write('</head>\n');
+    out.write(' </head>\n');
     out.write('\n');
     out.write('<body>\n');
     out.write('    ');
@@ -60,7 +76,7 @@ class layout_html extends Layout {
     body.write(out);
     final response = request.response;
     response.headers.add('Content-Type', 'text/html; charset=utf-8');
-    response.statusCode = 400;
+    response.statusCode = statusCode;
     response.write(out);
     return out.toString();
   }

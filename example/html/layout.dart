@@ -1,14 +1,15 @@
 import 'breadcrumb.dart';
+import 'html_tag.dart';
 
 export 'dart:io';
 
+export '../site/site_links.dart';
 export 'html_utils.dart';
-export 'site_links.dart';
 
 class Layout {
   final breadcrumbs = <Breadcrumb>[];
 
-  final metas = <Map<String, String>>[];
+  final tags = <HtmlTag>[];
 
   String title = '';
 
@@ -18,7 +19,9 @@ class Layout {
     breadcrumbs.add(item);
   }
 
-  void addMeta(Map<String, String> item) {
-    metas.add(item);
+  HtmlTag addTag(String name, [Map<String, String> attributes]) {
+    final tag = HtmlTag(name, attributes);
+    tags.add(tag);
+    return tag;
   }
 }
