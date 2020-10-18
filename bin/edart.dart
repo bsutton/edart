@@ -15,7 +15,7 @@ Future<void> main(List<String> args) async {
   }
 
   final infile = rest[0];
-  var outfile = '$infile.dart';
+  var outfile = '$infile.g.dart';
   if (rest.length > 1) {
     outfile = rest[1];
   }

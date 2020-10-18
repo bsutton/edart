@@ -1,3 +1,7 @@
+## 0.1.6
+
+- Command line compiler change: ".g.dart" extension is appended to the input filename if no output filename is specified
+
 ## 0.1.5
 
 - Added the ability to redefine the render return value and its type
