@@ -39,6 +39,7 @@ This is an advantage and a disadvantage at the same time.
 ### Pros
 
 - Allows to implement such features as layouts, blocks, includes etc in any convenient way
+- Allows to redefine the render return value and its type
 - Templates are compiled to Dart source code
 - Doesn't use reflection
 - Fast execution of templates
@@ -126,6 +127,24 @@ Supported class inheritance options include `extends`, `implements`, `mixins`.
 The render directive is used to specify the name of the render method and its parameters.  
 The method name can be specified via the `name` option.  
 The method parameters can be specified via the `params` option.  
+The `returns` option allows to change the return value and type.  
+Default value: `out.toString(): String`.  
+This is useful if you need to return a result other than a string value.  
+For example, return a value of type `Response`.  
+Option `returns` has the following format.
+
+`resultExpr: TypeOfResult`
+
+```html
+<%== tagDir %> render params="Request request" <%== tagEnd %>
+<%== tagDir %> render returns="response: Response" <%== tagEnd %>
+<%== tagCod %>
+// ... some code
+final content = layout.render(out, request);
+final response = Response(400, content, headers: headers);
+<%== tagEnd %>
+```
+
 
 ```html
 <%== tagDir %> render params="List<Product> products, HttpRequest request" <%== tagEnd %>

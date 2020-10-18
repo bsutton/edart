@@ -1,3 +1,8 @@
+## 0.1.5
+
+- Added the ability to redefine the render return value and its type
+- Added option `returns` to compiler directive `render`
+
 ## 0.1.4
 
 - Minor changes have been made to the source code of the example

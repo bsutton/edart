@@ -10,7 +10,8 @@ export '../html/html_utils.dart';
 export '../html/view.dart';
 
 class layout_html extends Layout {
-  String render(StringBuffer body, HttpRequest request, {int statusCode: 400}) {
+  String render(StringBuffer body, HttpRequest request,
+      {int statusCode = 400}) {
     final out = StringBuffer();
     out.write('<html>\n');
     out.write('\n');

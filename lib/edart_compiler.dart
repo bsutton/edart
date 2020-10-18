@@ -53,7 +53,10 @@ class EdartCompiler {
 
     fragments = _prepare(fragments);
     final classOptions = {'name': classname};
-    final renderOptions = {'name': 'render'};
+    final renderOptions = {
+      'name': 'render',
+      'returns': 'out.toString(): String'
+    };
     final code = StringBuffer();
     code.writeln('// ignore: unused_import');
     code.writeln('import \'dart:convert\';');
@@ -136,7 +139,16 @@ class EdartCompiler {
 
     code.writeln(' {');
     //
-    code.write('String ');
+    final returns = renderOptions['returns'].split(':');
+    if (returns.length != 2) {
+      throw FormatException(
+          'Invalid "returns" in directive "render"', renderOptions['returns']);
+    }
+
+    final returnExpr = returns[0].trim();
+    final returnType = returns[1].trim();
+    code.write(returnType);
+    code.write(' ');
     code.write(renderOptions['name']);
     code.write('(');
     if (renderOptions.containsKey('params')) {
@@ -175,7 +187,9 @@ class EdartCompiler {
       }
     }
 
-    code.writeln('return out.toString();');
+    code.write('return ');
+    code.write(returnExpr);
+    code.writeln(';');
     code.write('}');
 
     code.write('}');

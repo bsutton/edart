@@ -54,6 +54,7 @@ class readme {
     out.write('\n');
     out.write(
         '- Allows to implement such features as layouts, blocks, includes etc in any convenient way\n');
+    out.write('- Allows to redefine the render return value and its type\n');
     out.write('- Templates are compiled to Dart source code\n');
     out.write('- Doesn\'t use reflection\n');
     out.write('- Fast execution of templates\n');
@@ -209,6 +210,34 @@ class readme {
     out.write('The method name can be specified via the `name` option.  \n');
     out.write(
         'The method parameters can be specified via the `params` option.  \n');
+    out.write(
+        'The `returns` option allows to change the return value and type.  \n');
+    out.write('Default value: `out.toString(): String`.  \n');
+    out.write(
+        'This is useful if you need to return a result other than a string value.  \n');
+    out.write('For example, return a value of type `Response`.  \n');
+    out.write('Option `returns` has the following format.\n');
+    out.write('\n');
+    out.write('`resultExpr: TypeOfResult`\n');
+    out.write('\n');
+    out.write('```html\n');
+    out.write(tagDir);
+    out.write(' render params="Request request" ');
+    out.write(tagEnd);
+    out.write('\n');
+    out.write(tagDir);
+    out.write(' render returns="response: Response" ');
+    out.write(tagEnd);
+    out.write('\n');
+    out.write(tagCod);
+    out.write('\n');
+    out.write('// ... some code\n');
+    out.write('final content = layout.render(out, request);\n');
+    out.write('final response = Response(400, content, headers: headers);\n');
+    out.write(tagEnd);
+    out.write('\n');
+    out.write('```\n');
+    out.write('\n');
     out.write('\n');
     out.write('```html\n');
     out.write(tagDir);
