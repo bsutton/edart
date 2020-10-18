@@ -100,7 +100,7 @@ class EdartCompiler {
           code.writeln(';');
           break;
         case 'render':
-          keys.addAll(['name', 'params']);
+          keys.addAll(['name', 'params', 'returns']);
           options = renderOptions;
           break;
         default:
