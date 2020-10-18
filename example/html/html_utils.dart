@@ -1,19 +1,5 @@
 import 'dart:convert';
 
-class HtmlUtils {
-  static String attrs(Map<String, String> attrs) {
-    final sb = StringBuffer();
-    for (final key in attrs.keys) {
-      sb.write(key);
-      sb.write('="');
-      sb.write(attrs[key]);
-      sb.write('"');
-    }
-
-    return sb.toString();
-  }
-}
-
 class HtmlTag {
   final Map<String, String> attributes = {};
 
@@ -33,21 +19,12 @@ class HtmlTag {
 
   @override
   String toString() {
-    final attrEscape = HtmlEscape(HtmlEscapeMode.attribute);
     final sb = StringBuffer();
     sb.write('<');
     sb.write(name);
     if (attributes.isNotEmpty) {
       sb.write(' ');
-      for (final key in attributes.keys) {
-        sb.write(key);
-        sb.write('=');
-        sb.write('"');
-        var value = attributes[key];
-        value = attrEscape.convert(value);
-        sb.write(value);
-        sb.write('"');
-      }
+      sb.write(HtmlUtils.attrs(attributes));
     }
 
     if (content.isEmpty) {
@@ -58,6 +35,23 @@ class HtmlTag {
       sb.write('<');
       sb.write(name);
       sb.write('/>');
+    }
+
+    return sb.toString();
+  }
+}
+
+class HtmlUtils {
+  static String attrs(Map<String, String> attributes) {
+    final attrEscape = HtmlEscape(HtmlEscapeMode.attribute);
+    final sb = StringBuffer();
+    for (final key in attributes.keys) {
+      sb.write(key);
+      sb.write('="');
+      var value = attributes[key];
+      value = attrEscape.convert(value);
+      sb.write(value);
+      sb.write('"');
     }
 
     return sb.toString();

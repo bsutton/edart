@@ -1,3 +1,7 @@
+## 0.1.4
+
+- Minor changes have been made to the source code of the example
+
 ## 0.1.3
 
 - Minor changes have been made to the source code of the example
