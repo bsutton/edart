@@ -1,0 +1,36 @@
+<%@ import uri="layout.html.g.dart" %>
+<%@ import uri="../models/product.dart" %>
+<%@ class extends="View" %>
+<%@ render params="List<Product> products, HttpRequest request" %>
+<h1>
+    Price list
+</h1>
+<% if (products.isEmpty) { %>
+<p>
+    No products found
+</p>
+<% } else { %>
+<table class="w3-table-all">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+    </tr>
+    <% for (final product in products) { %>
+    <tr>
+        <td>
+            <a href="<%= HtmlUtils.href(SiteLinks.product, {'id': product.id}) %>">
+                <%= product.name %>
+            </a>
+        </td>
+        <td><%= product.price %></td>
+    </tr>
+    <% } %>
+</table>
+<% } %>
+<%
+final layout = layout_html();
+layout.title = 'Products';
+layout.addMeta({'name': 'description', 'content': 'Price list'});
+layout.addBreadcrumb('Products', SiteLinks.products);
+layout.render(out, request);
+%>

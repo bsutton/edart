@@ -20,8 +20,6 @@ class breadcrumbs_html {
           out.write(htmlEscape.convert('${item.text}'));
         }
       }
-    } else {
-      out.write('Home');
     }
     out.write('</p>');
     return out.toString();

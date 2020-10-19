@@ -105,7 +105,7 @@ List of compiler directives (in the form of a name and a list of arguments):
 - export: as, hide, show, uri
 - import: as, hide, show, uri
 - class: extends, implements, mixins, name
-- render: name, params
+- render: name, params, returns
 
 The `import` and `export` directives are used for import and export and follow the same Dart language directives.  
 They support the following options: `as`, `hide`, `show` and `uri`.
@@ -145,7 +145,6 @@ final response = Response(400, content, headers: headers);
 <%== tagEnd %>
 ```
 
-
 ```html
 <%== tagDir %> render params="List<Product> products, HttpRequest request" <%== tagEnd %>
 ```
@@ -174,7 +173,7 @@ Also possible to compile the templates via `build_runner`
 final files = [
   'example/views/nav.html',
   'example/views/layout.html',
-  'example/views/products_index.html',];
+  'example/views/products.html',];
 for (final file in files) { %>
 
 `<%== file %>`

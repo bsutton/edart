@@ -1,6 +1,6 @@
 name: edart
 description: Embedded Dart template engine and compiler. Compiles templates to Dart source code.
-version: 0.1.6
+version: 0.1.7
 homepage: https://github.com/mezoni/edart
 environment:
   sdk: '>=2.10.0 <3.0.0'

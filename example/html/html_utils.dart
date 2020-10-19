@@ -56,4 +56,22 @@ class HtmlUtils {
 
     return sb.toString();
   }
+
+  static String href(String url, [Map<String, dynamic> attributes]) {
+    attributes ??= {};
+    final sb = StringBuffer();
+    sb.write(url);
+    final params = <String>[];
+    for (final key in attributes.keys) {
+      final value = attributes[key];
+      if (value != null) {
+        params.add('?${key}=${value}');
+      } else {
+        params.add('?${key}');
+      }
+    }
+
+    sb.write(params.join('&'));
+    return sb.toString();
+  }
 }

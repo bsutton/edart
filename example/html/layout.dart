@@ -18,6 +18,11 @@ class Layout {
     breadcrumbs.add(item);
   }
 
+  void addMeta(Map<String, String> attributes) {
+    final tag = HtmlTag('meta', attributes);
+    addTag(tag);
+  }
+
   HtmlTag addTag(HtmlTag tag) {
     tags.add(tag);
     return tag;

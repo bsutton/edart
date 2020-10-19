@@ -3,7 +3,7 @@
 
 Embedded Dart template engine and compiler. Compiles templates to Dart source code.
 
-Version: 0.1.6
+Version: 0.1.7
 
 ### Warning
 
@@ -95,7 +95,7 @@ List of compiler directives (in the form of a name and a list of arguments):
 - export: as, hide, show, uri
 - import: as, hide, show, uri
 - class: extends, implements, mixins, name
-- render: name, params
+- render: name, params, returns
 
 The `import` and `export` directives are used for import and export and follow the same Dart language directives.  
 They support the following options: `as`, `hide`, `show` and `uri`.
@@ -134,7 +134,6 @@ final content = layout.render(out, request);
 final response = Response(400, content, headers: headers);
 %>
 ```
-
 
 ```html
 <%@ render params="List<Product> products, HttpRequest request" %>
@@ -260,26 +259,41 @@ response.write(out);
 %>
 ```
 
-`example/views/products_index.html`
+`example/views/products.html`
 
 ```html
 <%@ import uri="layout.html.g.dart" %>
 <%@ import uri="../models/product.dart" %>
 <%@ class extends="View" %>
 <%@ render params="List<Product> products, HttpRequest request" %>
-<p>
-    Our cool products list
-</p>
-<ul class="w3-ul">
+<h1>
+    Price list
+</h1>
+<% if (products.isEmpty) { %>
+No products found
+<% } else { %>
+<table class="w3-table-all">
+    <tr>
+        <th>Peoduct</th>
+        <th>Price</th>
+    </tr>
     <% for (final product in products) { %>
-    <li><%= product.name %>&nbsp;<%= product.price %></li><%
-    } %>
-</ul>
+    <tr>
+        <td>
+            <a href="<%= HtmlUtils.href(SiteLinks.product, {'id': product.id}) %>">
+                <%= product.name %>
+            </a>
+        </td>
+        <td><%= product.price %></td>
+    </tr>
+    <% } %>
+</table>
+<% } %>
 <%
 final layout = layout_html();
 layout.title = 'Products';
-layout.addTag(HtmlTag('meta', {'description': 'MegaSuperShop cool price list'}));
-layout.addBreadcrumb('Products', request.requestedUri.toString());
+layout.addMeta({'name': 'description', 'content': 'Price list'});
+layout.addBreadcrumb('Products', SiteLinks.products);
 layout.render(out, request);
 %>
 ```

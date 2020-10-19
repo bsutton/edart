@@ -3,7 +3,7 @@ import 'site_links.dart';
 class Menu {
   static final Menu main = Menu([
     MenuItem('Home', '/'),
-    MenuItem('Products', SiteLinks.productsIndex),
+    MenuItem('Products', SiteLinks.products),
   ]);
 
   List<MenuItem> items = [];

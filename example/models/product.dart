@@ -1,7 +1,9 @@
 class Product {
-  String name;
+  final int id;
 
-  double price = 0;
+  final String name;
 
-  Product(this.name, this.price);
+  final double price;
+
+  Product(this.id, this.name, this.price);
 }

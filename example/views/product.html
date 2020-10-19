@@ -1,0 +1,19 @@
+<%@ import uri="layout.html.g.dart" %>
+<%@ import uri="../models/product.dart" %>
+<%@ class extends="View" %>
+<%@ render params="Product product, HttpRequest request" %>
+<h1>
+    <%= product.name %>
+</h1>
+<ul class="w3-ul">
+    <li>Name: <%= product.name %></li>
+    <li>Price: <%= product.price %></li>
+</ul>
+<%
+final layout = layout_html();
+layout.title = product.name;
+layout.addMeta({'name': 'description', 'content': product.name});
+layout.addBreadcrumb('Products', SiteLinks.products);
+layout.addBreadcrumb(product.name, HtmlUtils.href(SiteLinks.product, {'id': product.id}));
+layout.render(out, request);
+%>

@@ -1,8 +1,13 @@
 <%@ import uri="layout.html.g.dart" %>
 <%@ render params="HttpRequest request" %>
-Page not found
+<h1>
+    Error 404
+</h1>
+<p>
+    Page not found
+</p>
 <%
 final layout = layout_html();
-layout.addTag(HtmlTag('meta', {'description': 'Error 404'}));
+layout.addMeta({'name': 'description', 'content': 'Error 404'});
 layout.render(out, request, statusCode: 404);
 %>

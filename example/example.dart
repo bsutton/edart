@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'models/product.dart';
+import 'service/catalog_service.dart';
 import 'views/error404.html.g.dart';
-import 'views/home_index.html.g.dart';
-import 'views/products_index.html.g.dart';
+import 'views/home.html.g.dart';
+import 'views/product.html.g.dart';
+import 'views/products.html.g.dart';
 
 Future<void> main() async {
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8081);
@@ -26,6 +27,10 @@ Future<void> _handle(HttpRequest request) async {
     case '/':
       await _handleHome(request);
       break;
+    case '/product':
+    case '/product/':
+      await _handleProduct(request);
+      break;
     case '/products':
     case '/products/':
       await _handleProducts(request);
@@ -37,7 +42,7 @@ Future<void> _handle(HttpRequest request) async {
 }
 
 Future<void> _handleHome(HttpRequest request) async {
-  final view = home_index_html();
+  final view = home_html();
   view.render(request);
 }
 
@@ -46,13 +51,28 @@ Future<void> _handleNotFound(HttpRequest request) async {
   view.render(request);
 }
 
-Future<void> _handleProducts(HttpRequest request) async {
-  final products = [
-    Product('Cool product', 100),
-    Product('Very cool product', 200),
-    Product('Super cool product', 300),
-  ];
+Future<void> _handleProduct(HttpRequest request) async {
+  final params = request.uri.queryParameters;
+  final id = int.parse(params['id'], onError: (s) => null);
+  if (id == null) {
+    await request.response.redirect(Uri.parse('/'));
+    return;
+  }
 
-  final view = products_index_html();
+  final catalog = CatalogService();
+  final product = await catalog.getProduct(id);
+  if (product == null) {
+    await request.response.redirect(Uri.parse('/'));
+    return;
+  }
+
+  final view = product_html();
+  view.render(product, request);
+}
+
+Future<void> _handleProducts(HttpRequest request) async {
+  final catalog = CatalogService();
+  final products = await catalog.findProducts();
+  final view = products_html();
   view.render(products, request);
 }

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
-class readme {
+class readme_md {
   String render(Pubspec pubspec) {
     final out = StringBuffer();
     const tagCod = '<%';
@@ -170,7 +170,7 @@ class readme {
     out.write('- export: as, hide, show, uri\n');
     out.write('- import: as, hide, show, uri\n');
     out.write('- class: extends, implements, mixins, name\n');
-    out.write('- render: name, params\n');
+    out.write('- render: name, params, returns\n');
     out.write('\n');
     out.write(
         'The `import` and `export` directives are used for import and export and follow the same Dart language directives.  \n');
@@ -238,7 +238,6 @@ class readme {
     out.write('\n');
     out.write('```\n');
     out.write('\n');
-    out.write('\n');
     out.write('```html\n');
     out.write(tagDir);
     out.write(' render params="List<Product> products, HttpRequest request" ');
@@ -270,7 +269,7 @@ class readme {
     final files = [
       'example/views/nav.html',
       'example/views/layout.html',
-      'example/views/products_index.html',
+      'example/views/products.html',
     ];
     for (final file in files) {
       out.write('\n');

@@ -1,3 +1,8 @@
+## 0.1.7
+
+- Minor corrections in `README.md`
+- Small improvements in `example` folder
+
 ## 0.1.6
 
 - Command line compiler change: ".g.dart" extension is appended to the input filename if no output filename is specified
