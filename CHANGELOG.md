@@ -1,3 +1,8 @@
+## 0.1.8
+
+- The parser was generated using a newer version of the parser generator
+- Example migrated to null safety
+
 ## 0.1.7
 
 - Minor corrections in `README.md`

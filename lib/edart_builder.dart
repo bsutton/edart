@@ -1,3 +1,5 @@
+// @dart = 2.10
+
 import 'package:build/build.dart';
 import 'package:edart/edart_compiler.dart';
 import 'package:path/path.dart' as _path;

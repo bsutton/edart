@@ -10,7 +10,7 @@ class Menu {
 
   Menu(this.items);
 
-  MenuItem findActive(String url) {
+  MenuItem? findActive(String url) {
     for (final item in items) {
       if (item.url == url) {
         return item;

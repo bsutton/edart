@@ -4,1283 +4,892 @@
 import 'package:edart/fragment.dart';
 
 class EdartParser {
-  static const _eof = 0x110000;
+  static const int _eof = 1114112;
 
-  FormatException error;
+  FormatException? error;
 
-  int _c;
+  int _failStart = -1;
 
-  int _error;
+  List _failures = [];
 
-  List<String> _expected;
+  bool ok = false;
 
-  int _failure;
+  int _ch = 0;
 
-  List<int> _input;
+  int _failPos = -1;
 
-  List<List<_Memo>> _memos;
+  int _pos = 0;
 
-  var _mresult;
+  String _source = '';
 
-  int _pos;
-
-  bool _predicate;
-
-  dynamic _result;
-
-  bool _success;
-
-  String _text;
-
-  dynamic parse(String text) {
-    if (text == null) {
-      throw ArgumentError.notNull('text');
-    }
-    _text = text;
-    _input = _toRunes(text);
+  List<Fragment>? parse(String source) {
+    _source = source;
     _reset();
-    final result = _parseFragments(false, true);
-    _buildError();
-    _expected = null;
-    _input = null;
+    final result = _parseFragments();
+    if (!ok) {
+      _buildError();
+    }
+
     return result;
+  }
+
+  List<Fragment>? _parseFragments() {
+    List<Fragment>? $0;
+    final $2 = _ch;
+    final $3 = _pos;
+    List<Fragment>? $4;
+    List<Fragment>? $5;
+    final $6 = <Fragment>[];
+    while (true) {
+      final $7 = _parseFragment();
+      if (!ok) {
+        break;
+      }
+      $6.add($7!);
+    }
+    if (ok = true) {
+      $5 = $6;
+    }
+    _parse_eof();
+    if (ok) {
+      $4 = $5;
+    }
+    if (ok) {
+      $0 = $4;
+    } else {
+      _ch = $2;
+      _pos = $3;
+    }
+    return $0;
+  }
+
+  Fragment? _parseFragment() {
+    Fragment? $0;
+    final $1 = _ch;
+    final $2 = _pos;
+    while (true) {
+      Fragment? $4;
+      _parse$Terminal16();
+      if (ok) {
+        final $5 = _parseDirective();
+        if (ok) {
+          _parseClosedTag();
+          if (ok) {
+            final d = $5!;
+            late Fragment $$;
+            $$ = Fragment.directive(d);
+            $4 = $$;
+          }
+        }
+      }
+      if (ok) {
+        $0 = $4;
+        break;
+      }
+      _ch = $1;
+      _pos = $2;
+      Fragment? $7;
+      _parse$Terminal15();
+      if (ok) {
+        final $8 = _parse_expression();
+        if (ok) {
+          _parseClosedTag();
+          if (ok) {
+            final e = $8!;
+            late Fragment $$;
+            $$ = Fragment.raw(e);
+            $7 = $$;
+          }
+        }
+      }
+      if (ok) {
+        $0 = $7;
+        break;
+      }
+      _ch = $1;
+      _pos = $2;
+      Fragment? $10;
+      _parse$Terminal14();
+      if (ok) {
+        final $11 = _parse_expression();
+        if (ok) {
+          _parseClosedTag();
+          if (ok) {
+            final e = $11!;
+            late Fragment $$;
+            $$ = Fragment.expression(e);
+            $10 = $$;
+          }
+        }
+      }
+      if (ok) {
+        $0 = $10;
+        break;
+      }
+      _ch = $1;
+      _pos = $2;
+      Fragment? $13;
+      _parse_$LessThanSign$PercentSign();
+      if (ok) {
+        final $14 = _parse_source();
+        _parseClosedTag();
+        if (ok) {
+          final s = $14!;
+          late Fragment $$;
+          $$ = Fragment.code(s);
+          $13 = $$;
+        }
+      }
+      if (ok) {
+        $0 = $13;
+        break;
+      }
+      _ch = $1;
+      _pos = $2;
+      Fragment? $16;
+      final $17 = _parse_text();
+      if (ok) {
+        final s = $17!;
+        late Fragment $$;
+        $$ = Fragment.text(s);
+        $16 = $$;
+      }
+      if (ok) {
+        $0 = $16;
+        break;
+      }
+      _ch = $1;
+      break;
+    }
+    return $0;
+  }
+
+  String? _parseClosedTag() {
+    _parse_$PercentSign$GreaterThanSign();
+    return null;
+  }
+
+  Directive? _parseDirective() {
+    Directive? $0;
+    final $2 = _ch;
+    final $3 = _pos;
+    Directive? $4;
+    final $5 = _parse_indentifier();
+    if (ok) {
+      final $6 = _parseAttributes();
+      final n = $5!;
+      final a = $6!;
+      late Directive $$;
+      $$ = Directive(n, a);
+      $4 = $$;
+    }
+    if (ok) {
+      $0 = $4;
+    } else {
+      _ch = $2;
+      _pos = $3;
+    }
+    return $0;
+  }
+
+  List<Attribute>? _parseAttributes() {
+    List<Attribute>? $0;
+    List<Attribute>? $2;
+    List<Attribute>? $3;
+    final $4 = <Attribute>[];
+    while (true) {
+      final $5 = _parseAttribute();
+      if (!ok) {
+        break;
+      }
+      $4.add($5!);
+    }
+    if (ok = true) {
+      $3 = $4;
+    }
+    $2 = $3;
+    if (ok) {
+      $0 = $2;
+    }
+    return $0;
+  }
+
+  Attribute? _parseAttribute() {
+    Attribute? $0;
+    final $2 = _ch;
+    final $3 = _pos;
+    Attribute? $4;
+    final $5 = _parse_indentifier();
+    if (ok) {
+      _parse_$EqualSign();
+      if (ok) {
+        final $6 = _parse_string();
+        if (ok) {
+          final n = $5!;
+          final v = $6!;
+          late Attribute $$;
+          $$ = Attribute(n, v);
+          $4 = $$;
+        }
+      }
+    }
+    if (ok) {
+      $0 = $4;
+    } else {
+      _ch = $2;
+      _pos = $3;
+    }
+    return $0;
+  }
+
+  dynamic _parse_eof() {
+    _failPos = _pos;
+    _parse$$eof();
+    if (!ok) {
+      _fail('\'eof\'');
+    }
+    return null;
+  }
+
+  String? _parse_expression() {
+    _failPos = _pos;
+    String? $0;
+    String? $2;
+    String? $3;
+    final $4 = _pos;
+    var $5 = 0;
+    while (true) {
+      final $6 = _ch;
+      final $7 = _pos;
+      final $8 = _failPos;
+      final $9 = _failStart;
+      final $10 = _failures;
+      _matchString('%>');
+      _ch = $6;
+      _pos = $7;
+      _failPos = $8;
+      _failStart = $9;
+      _failures = $10;
+      ok = !ok;
+      if (ok) {
+        _matchAny();
+      }
+      if (!ok) {
+        break;
+      }
+      $5++;
+    }
+    ok = $5 != 0;
+    if (ok) {
+      $3 = _source.substring($4, _pos);
+    }
+    if (ok) {
+      $2 = $3;
+    }
+    if (ok) {
+      $0 = $2;
+    } else {
+      _fail('\'expression\'');
+    }
+    return $0;
+  }
+
+  String? _parse_indentifier() {
+    _failPos = _pos;
+    String? $0;
+    final $2 = _ch;
+    final $3 = _pos;
+    String? $4;
+    String? $5;
+    final $6 = _pos;
+    final $7 = _ch;
+    final $8 = _pos;
+    const $9 = [65, 90, 95, 95, 97, 122];
+    _matchRanges($9);
+    if (ok) {
+      while (true) {
+        const $10 = [48, 57, 65, 90, 95, 95, 97, 122];
+        _matchRanges($10);
+        if (!ok) {
+          break;
+        }
+      }
+      ok = true;
+    }
+    if (!ok) {
+      _ch = $7;
+      _pos = $8;
+    }
+    if (ok) {
+      $5 = _source.substring($6, _pos);
+    }
+    if (ok) {
+      _parse$$white();
+      final i = $5!;
+      $4 = i;
+    }
+    if (ok) {
+      $0 = $4;
+    } else {
+      _ch = $2;
+      _pos = $3;
+      _fail('\'indentifier\'');
+    }
+    return $0;
+  }
+
+  String? _parse_source() {
+    String? $0;
+    String? $2;
+    String? $3;
+    final $4 = _pos;
+    while (true) {
+      final $5 = _ch;
+      final $6 = _pos;
+      final $7 = _failPos;
+      final $8 = _failStart;
+      final $9 = _failures;
+      _matchString('%>');
+      _ch = $5;
+      _pos = $6;
+      _failPos = $7;
+      _failStart = $8;
+      _failures = $9;
+      ok = !ok;
+      if (ok) {
+        _matchAny();
+      }
+      if (!ok) {
+        break;
+      }
+    }
+    ok = true;
+    if (ok) {
+      $3 = _source.substring($4, _pos);
+    }
+    $2 = $3;
+    if (ok) {
+      $0 = $2;
+    }
+    return $0;
+  }
+
+  String? _parse_string() {
+    _failPos = _pos;
+    String? $0;
+    final $2 = _ch;
+    final $3 = _pos;
+    String? $4;
+    _matchChar(34, '"');
+    if (ok) {
+      List<int>? $5;
+      final $6 = <int>[];
+      while (true) {
+        final $7 = _parse$$char();
+        if (!ok) {
+          break;
+        }
+        $6.add($7!);
+      }
+      if (ok = true) {
+        $5 = $6;
+      }
+      _matchChar(34, '"');
+      if (ok) {
+        _parse$$white();
+        final c = $5!;
+        late String $$;
+        $$ = String.fromCharCodes(c);
+        $4 = $$;
+      }
+    }
+    if (ok) {
+      $0 = $4;
+    } else {
+      _ch = $2;
+      _pos = $3;
+      _fail('\'string\'');
+    }
+    return $0;
+  }
+
+  String? _parse_text() {
+    _failPos = _pos;
+    String? $0;
+    String? $2;
+    String? $3;
+    final $4 = _pos;
+    final $5 = _ch;
+    final $6 = _pos;
+    final $7 = _ch;
+    final $8 = _pos;
+    final $9 = _failPos;
+    final $10 = _failStart;
+    final $11 = _failures;
+    _parse$$eof();
+    _ch = $7;
+    _pos = $8;
+    _failPos = $9;
+    _failStart = $10;
+    _failures = $11;
+    ok = !ok;
+    if (ok) {
+      while (true) {
+        final $12 = _ch;
+        final $13 = _pos;
+        final $14 = _failPos;
+        final $15 = _failStart;
+        final $16 = _failures;
+        _matchString('<%');
+        _ch = $12;
+        _pos = $13;
+        _failPos = $14;
+        _failStart = $15;
+        _failures = $16;
+        ok = !ok;
+        if (ok) {
+          final $17 = _ch;
+          final $18 = _pos;
+          final $19 = _failPos;
+          final $20 = _failStart;
+          final $21 = _failures;
+          _parse$$newline();
+          _ch = $17;
+          _pos = $18;
+          _failPos = $19;
+          _failStart = $20;
+          _failures = $21;
+          ok = !ok;
+          if (ok) {
+            _matchAny();
+          }
+        }
+        if (!ok) {
+          break;
+        }
+      }
+      ok = true;
+      _parse$$newline();
+      ok = true;
+    }
+    if (!ok) {
+      _ch = $5;
+      _pos = $6;
+    }
+    if (ok) {
+      $3 = _source.substring($4, _pos);
+    }
+    if (ok) {
+      $2 = $3;
+    }
+    if (ok) {
+      $0 = $2;
+    } else {
+      _fail('\'text\'');
+    }
+    return $0;
+  }
+
+  String? _parse_$EqualSign() {
+    _failPos = _pos;
+    final $0 = _ch;
+    final $1 = _pos;
+    _matchChar(61, '=');
+    if (ok) {
+      _parse$$white();
+    }
+    if (!ok) {
+      _ch = $0;
+      _pos = $1;
+      _fail('\'=\'');
+    }
+    return null;
+  }
+
+  String? _parse_$LessThanSign$PercentSign() {
+    _failPos = _pos;
+    final $0 = _ch;
+    final $1 = _pos;
+    _matchString('<%');
+    if (ok) {
+      _parse$$white();
+    }
+    if (!ok) {
+      _ch = $0;
+      _pos = $1;
+      _fail('\'<%\'');
+    }
+    return null;
+  }
+
+  String? _parse$Terminal14() {
+    _failPos = _pos;
+    final $0 = _ch;
+    final $1 = _pos;
+    _matchString('<%=');
+    if (ok) {
+      _parse$$white();
+    }
+    if (!ok) {
+      _ch = $0;
+      _pos = $1;
+      _fail('\'<%=\'');
+    }
+    return null;
+  }
+
+  String? _parse$Terminal15() {
+    _failPos = _pos;
+    final $0 = _ch;
+    final $1 = _pos;
+    _matchString('<%==');
+    if (ok) {
+      _parse$$white();
+    }
+    if (!ok) {
+      _ch = $0;
+      _pos = $1;
+      _fail('\'<%==\'');
+    }
+    return null;
+  }
+
+  String? _parse$Terminal16() {
+    _failPos = _pos;
+    final $0 = _ch;
+    final $1 = _pos;
+    _matchString('<%@');
+    if (ok) {
+      _parse$$white();
+    }
+    if (!ok) {
+      _ch = $0;
+      _pos = $1;
+      _fail('\'<%@\'');
+    }
+    return null;
+  }
+
+  String? _parse_$PercentSign$GreaterThanSign() {
+    _failPos = _pos;
+    _matchString('%>');
+    if (!ok) {
+      _fail('\'%>\'');
+    }
+    return null;
+  }
+
+  int? _parse$$char() {
+    int? $0;
+    final $1 = _ch;
+    while (true) {
+      int? $3;
+      final $4 = _matchRange(32, 33);
+      if (ok) {
+        $3 = $4;
+      }
+      if (ok) {
+        $0 = $3;
+        break;
+      }
+      _ch = $1;
+      int? $6;
+      final $7 = _matchRange(35, 91);
+      if (ok) {
+        $6 = $7;
+      }
+      if (ok) {
+        $0 = $6;
+        break;
+      }
+      _ch = $1;
+      int? $9;
+      final $10 = _matchRange(93, 1114111);
+      if (ok) {
+        $9 = $10;
+      }
+      if (ok) {
+        $0 = $9;
+        break;
+      }
+      _ch = $1;
+      break;
+    }
+    return $0;
+  }
+
+  dynamic _parse$$eof() {
+    final $0 = _ch;
+    final $1 = _pos;
+    final $2 = _failPos;
+    final $3 = _failStart;
+    final $4 = _failures;
+    _matchAny();
+    _ch = $0;
+    _pos = $1;
+    _failPos = $2;
+    _failStart = $3;
+    _failures = $4;
+    ok = !ok;
+    return null;
+  }
+
+  dynamic _parse$$newline() {
+    final $0 = _ch;
+    while (true) {
+      _matchChar(10, 10);
+      if (ok) {
+        break;
+      }
+      _ch = $0;
+      _matchString('\r\n');
+      if (ok) {
+        break;
+      }
+      _ch = $0;
+      break;
+    }
+    return null;
+  }
+
+  List? _parse$$white() {
+    while (true) {
+      final $0 = _ch;
+      while (true) {
+        const $1 = [9, 10, 32, 32];
+        _matchRanges($1);
+        if (ok) {
+          break;
+        }
+        _ch = $0;
+        _matchString('\r\n');
+        if (ok) {
+          break;
+        }
+        _ch = $0;
+        break;
+      }
+      if (!ok) {
+        break;
+      }
+    }
+    ok = true;
+    return null;
   }
 
   void _buildError() {
-    if (_success) {
-      error = null;
+    final names = <String>[];
+    final ends = <int>[];
+    var failEnd = 0;
+    for (var i = 0; i < _failures.length; i += 2) {
+      final name = _failures[i] as String;
+      final end = _failures[i + 1] as int;
+      if (failEnd < end) {
+        failEnd = end;
+      }
+
+      names.add(name);
+      ends.add(end);
+    }
+
+    final temp = <String>[];
+    for (var i = 0; i < names.length; i++) {
+      if (ends[i] == failEnd) {
+        temp.add(names[i]);
+      }
+    }
+
+    final expected = temp.toSet().toList();
+    expected.sort();
+    final sink = StringBuffer();
+    if (_failStart == failEnd) {
+      if (failEnd < _source.length) {
+        sink.write('Unexpected character ');
+        final ch = _getChar(_failStart);
+        if (ch >= 32 && ch < 126) {
+          sink.write('\'');
+          sink.write(String.fromCharCode(ch));
+          sink.write('\'');
+        } else {
+          sink.write('(');
+          sink.write(ch);
+          sink.write(')');
+        }
+      } else {
+        sink.write('Unexpected end of input');
+      }
+
+      if (expected.isNotEmpty) {
+        sink.write(', expected: ');
+        sink.write(expected.join(', '));
+      }
+    } else {
+      sink.write('Unterminated ');
+      if (expected.isEmpty) {
+        sink.write('unknown token');
+      } else if (expected.length == 1) {
+        sink.write('token ');
+        sink.write(expected[0]);
+      } else {
+        sink.write('tokens ');
+        sink.write(expected.join(', '));
+      }
+    }
+
+    error = FormatException(sink.toString(), _source, _failStart);
+  }
+
+  void _fail(String name) {
+    if (_pos < _failStart) {
       return;
     }
 
-    String escape(int c) {
-      switch (c) {
-        case 10:
-          return r'\n';
-        case 13:
-          return r'\r';
-        case 09:
-          return r'\t';
-        case _eof:
-          return 'end of file';
-      }
-      return String.fromCharCode(c);
+    if (_failStart < _pos) {
+      _failStart = _pos;
+      _failures = [];
     }
 
-    String getc(int position) {
-      if (position < _text.length) {
-        return "'${escape(_input[position])}'";
-      }
-      return 'end of file';
-    }
+    _failures.add(name);
+    _failures.add(_failPos);
+  }
 
-    String report(String message, String source, int start) {
-      if (start < 0 || start > source.length) {
-        start = null;
-      }
-
-      final sb = StringBuffer();
-      sb.write(message);
-      var line = 0;
-      var col = 0;
-      var lineStart = 0;
-      var started = false;
-      if (start != null) {
-        for (var i = 0; i < source.length; i++) {
-          final c = source.codeUnitAt(i);
-          if (!started) {
-            started = true;
-            lineStart = i;
-            line++;
-            col = 1;
+  int _getChar(int pos) {
+    if (pos < _source.length) {
+      var ch = _source.codeUnitAt(pos);
+      if (ch >= 0xD800 && ch <= 0xDBFF) {
+        if (pos + 1 < _source.length) {
+          final ch2 = _source.codeUnitAt(pos + 1);
+          if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
+            ch = ((ch - 0xD800) << 10) + (ch2 - 0xDC00) + 0x10000;
           } else {
-            col++;
+            throw FormatException('Unpaired high surrogate', _source, pos);
           }
-          if (c == 10) {
-            started = false;
-          }
-          if (start == i) {
-            break;
-          }
+        } else {
+          throw FormatException('The source has been exhausted', _source, pos);
         }
-      }
-
-      if (start == null) {
-        sb.writeln('.');
-      } else if (line == 0 || start == source.length) {
-        sb.write(' (at offset ');
-        sb.write(start);
-        sb.writeln('):');
       } else {
-        sb.write(' (at line ');
-        sb.write(line);
-        sb.write(', column ');
-        sb.write(col);
-        sb.writeln('):');
-      }
-
-      List<int> escape(int c) {
-        switch (c) {
-          case 9:
-            return [92, 116];
-          case 10:
-            return [92, 110];
-          case 13:
-            return [92, 114];
-          default:
-            return [c];
+        if (ch >= 0xDC00 && ch <= 0xDFFF) {
+          throw FormatException(
+              'UTF-16 surrogate values are illegal in UTF-32', _source, pos);
         }
       }
 
-      const max = 70;
-      if (start != null) {
-        final c1 = <int>[];
-        final c2 = <int>[];
-        final half = max ~/ 2;
-        var cr = false;
-        for (var i = start; i >= lineStart && c1.length < half; i--) {
-          if (i == source.length) {
-            c2.insert(0, 94);
-          } else {
-            final c = source.codeUnitAt(i);
-            final escaped = escape(c);
-            c1.insertAll(0, escaped);
-            if (c == 10) {
-              cr = true;
-            }
+      return ch;
+    }
 
-            final r = i == start ? 94 : 32;
-            for (var k = 0; k < escaped.length; k++) {
-              c2.insert(0, r);
-            }
-          }
-        }
+    return _eof;
+  }
 
-        for (var i = start + 1;
-            i < source.length && c1.length < max && !cr;
-            i++) {
-          final c = source.codeUnitAt(i);
-          final escaped = escape(c);
-          c1.addAll(escaped);
-          if (c == 10) {
-            break;
-          }
-        }
-
-        final text1 = String.fromCharCodes(c1);
-        final text2 = String.fromCharCodes(c2);
-        sb.writeln(text1);
-        sb.writeln(text2);
+  int? _matchAny() {
+    if (_ch == _eof) {
+      if (_failPos < _pos) {
+        _failPos = _pos;
       }
 
-      return sb.toString();
+      ok = false;
+      return null;
     }
 
-    final temp = _expected.toList();
-    temp.sort((e1, e2) => e1.compareTo(e2));
-    final expected = temp.toSet();
-    final hasMalformed = false;
-    if (expected.isNotEmpty) {
-      if (!hasMalformed) {
-        final sb = StringBuffer();
-        sb.write('Expected ');
-        sb.write(expected.join(', '));
-        sb.write(' but found ');
-        sb.write(getc(_error));
-        final title = sb.toString();
-        final message = report(title, _text, _error);
-        error = FormatException(message);
-      } else {
-        final reason = _error == _text.length ? 'Unterminated' : 'Malformed';
-        final sb = StringBuffer();
-        sb.write(reason);
-        sb.write(' ');
-        sb.write(expected.join(', '));
-        final title = sb.toString();
-        final message = report(title, _text, _error);
-        error = FormatException(message);
+    final ch = _ch;
+    _pos += _ch <= 0xffff ? 1 : 2;
+    _ch = _getChar(_pos);
+    ok = true;
+    return ch;
+  }
+
+  T? _matchChar<T>(int ch, T? result) {
+    if (ch != _ch) {
+      if (_failPos < _pos) {
+        _failPos = _pos;
       }
-    } else {
-      final sb = StringBuffer();
-      sb.write('Unexpected character ');
-      sb.write(getc(_error));
-      final title = sb.toString();
-      final message = report(title, _text, _error);
-      error = FormatException(message);
-    }
-  }
 
-  void _fail(List<String> expected) {
-    if (_error < _failure) {
-      _error = _failure;
-      _expected = [];
-    }
-    if (_error == _failure) {
-      _expected.addAll(expected);
-    }
-  }
-
-  void _failAt(int pos, List<String> expected) {
-    _success = false;
-    _failure = _pos;
-    if (_error <= _failure) {
-      _fail(expected);
-    }
-  }
-
-  int _matchChar(int c) {
-    int result;
-    if (c == _c) {
-      _success = true;
-      _c = _input[_pos += _c <= 0xffff ? 1 : 2];
-      result = c;
-    } else {
-      _success = false;
-      _failure = _pos;
+      ok = false;
+      return null;
     }
 
+    _pos += _ch <= 0xffff ? 1 : 2;
+    _ch = _getChar(_pos);
+    ok = true;
     return result;
   }
 
-  int _matchRanges(List<int> ranges) {
-    int result;
-    _success = false;
+  int? _matchRange(int start, int end) {
+    if (_ch >= start && _ch <= end) {
+      final ch = _ch;
+      _pos += _ch <= 0xffff ? 1 : 2;
+      _ch = _getChar(_pos);
+      ok = true;
+      return ch;
+    }
+
+    if (_failPos < _pos) {
+      _failPos = _pos;
+    }
+
+    ok = false;
+    return null;
+  }
+
+  int? _matchRanges(List<int> ranges) {
+    // Use binary search
     for (var i = 0; i < ranges.length; i += 2) {
-      if (ranges[i] <= _c) {
-        if (ranges[i + 1] >= _c) {
-          result = _c;
-          _c = _input[_pos += _c <= 0xffff ? 1 : 2];
-          _success = true;
-          break;
+      if (ranges[i] <= _ch) {
+        if (ranges[i + 1] >= _ch) {
+          final ch = _ch;
+          _pos += _ch <= 0xffff ? 1 : 2;
+          _ch = _getChar(_pos);
+          ok = true;
+          return ch;
         }
       } else {
         break;
       }
     }
 
-    if (!_success) {
-      _failure = _pos;
+    ok = false;
+    if (_failPos < _pos) {
+      _failPos = _pos;
     }
 
-    return result;
+    return null;
   }
 
-  String _matchString(String text) {
-    String result;
-    final length = text.length;
-    final rest = _text.length - _pos;
-    final count = length > rest ? rest : length;
-    var pos = _pos;
+  String? _matchString(String text) {
     var i = 0;
-    for (; i < count; i++, pos++) {
-      if (text.codeUnitAt(i) != _text.codeUnitAt(pos)) {
-        break;
-      }
-    }
-
-    if (_success = i == length) {
-      _c = _input[_pos += length];
-      result = text;
-    } else {
-      _failure = _pos + i;
-    }
-
-    return result;
-  }
-
-  bool _memoized(int id, bool productive) {
-    final memos = _memos[_pos];
-    if (memos != null) {
-      for (var i = 0; i < memos.length; i++) {
-        final memo = memos[i];
-        if (memo.id == id && memo.productive == productive) {
-          _pos = memo.pos;
-          _mresult = memo.result;
-          _success = memo.success;
-          _c = _input[_pos];
-          return true;
+    if (_ch == text.codeUnitAt(0)) {
+      i++;
+      if (_pos + text.length <= _source.length) {
+        for (; i < text.length; i++) {
+          if (text.codeUnitAt(i) != _source.codeUnitAt(_pos + i)) {
+            break;
+          }
         }
       }
     }
 
-    return false;
-  }
-
-  void _memoize(int id, int pos, bool productive, result) {
-    var memos = _memos[pos];
-    if (memos == null) {
-      memos = [];
-      _memos[pos] = memos;
+    ok = i == text.length;
+    if (ok) {
+      _pos = _pos + text.length;
+      _ch = _getChar(_pos);
+      return text;
+    } else {
+      final pos = _pos + i;
+      if (_failPos < pos) {
+        _failPos = pos;
+      }
+      return null;
     }
-
-    final memo = _Memo(
-      id: id,
-      pos: _pos,
-      productive: productive,
-      result: result,
-      success: _success,
-    );
-
-    memos.add(memo);
   }
 
   void _reset() {
-    _c = _input[0];
-    _error = 0;
-    _expected = [];
-    _failure = -1;
-    _memos = [];
-    _memos.length = _input.length + 1;
+    error = null;
+    _failPos = 0;
+    _failStart = 0;
+    _failures = [];
     _pos = 0;
-    _predicate = false;
-    _success = false;
-  }
-
-  List<int> _toRunes(String source) {
-    final length = source.length;
-    final result = List<int>(length + 1);
-    for (var pos = 0; pos < length;) {
-      int c;
-      final start = pos;
-      final leading = source.codeUnitAt(pos++);
-      if ((leading & 0xFC00) == 0xD800 && pos < length) {
-        final trailing = source.codeUnitAt(pos);
-        if ((trailing & 0xFC00) == 0xDC00) {
-          c = 0x10000 + ((leading & 0x3FF) << 10) + (trailing & 0x3FF);
-          pos++;
-        } else {
-          c = leading;
-        }
-      } else {
-        c = leading;
-      }
-
-      result[start] = c;
-    }
-
-    result[length] = 0x110000;
-    return result;
-  }
-
-  List<Fragment> _parseFragments(bool $0, bool $1) {
-    List<Fragment> $2;
-    final $3 = _pos;
-    List<Fragment> $6;
-    List<Fragment> $9;
-    if ($1) {
-      $9 = [];
-    }
-    for (;;) {
-      final $10 = _parseFragment(false, $1);
-      if (!_success) {
-        _success = true;
-        break;
-      }
-      if ($1) {
-        $9.add($10);
-      }
-    }
-    _parse_eof(false, false);
-    if (_success) {
-      $6 = $9;
-    }
-    $2 = $6;
-    if (!_success && _error == $3) {
-      _fail(const ['\'eof\'']);
-    }
-    return $2;
-  }
-
-  Fragment _parseFragment(bool $0, bool $1) {
-    Fragment $2;
-    final $3 = _pos;
-    final $4 = _c;
-    for (;;) {
-      Fragment $6;
-      final $7 = _c;
-      final $8 = _pos;
-      _parse$Terminal16(false, false);
-      if (_success) {
-        final $10 = _parseDirective(false, true);
-        if (_success) {
-          _parseClosedTag(false, false);
-          if (_success) {
-            final d = $10;
-            Fragment $$;
-            $$ = Fragment.directive(d);
-            $6 = $$;
-          }
-        }
-        if (!_success) {
-          _c = $7;
-          _pos = $8;
-        }
-      }
-      if (_success) {
-        $2 = $6;
-        break;
-      }
-      _c = $4;
-      _pos = $3;
-      Fragment $12;
-      final $13 = _c;
-      final $14 = _pos;
-      _parse$Terminal15(false, false);
-      if (_success) {
-        final $16 = _parse_expression(false, true);
-        if (_success) {
-          _parseClosedTag(false, false);
-          if (_success) {
-            final e = $16;
-            Fragment $$;
-            $$ = Fragment.raw(e);
-            $12 = $$;
-          }
-        }
-        if (!_success) {
-          _c = $13;
-          _pos = $14;
-        }
-      }
-      if (_success) {
-        $2 = $12;
-        break;
-      }
-      _c = $4;
-      _pos = $3;
-      Fragment $18;
-      final $19 = _c;
-      final $20 = _pos;
-      _parse$Terminal14(false, false);
-      if (_success) {
-        final $22 = _parse_expression(false, true);
-        if (_success) {
-          _parseClosedTag(false, false);
-          if (_success) {
-            final e = $22;
-            Fragment $$;
-            $$ = Fragment.expression(e);
-            $18 = $$;
-          }
-        }
-        if (!_success) {
-          _c = $19;
-          _pos = $20;
-        }
-      }
-      if (_success) {
-        $2 = $18;
-        break;
-      }
-      _c = $4;
-      _pos = $3;
-      Fragment $24;
-      final $25 = _c;
-      final $26 = _pos;
-      _parse_$LessThanSign$PercentSign(false, false);
-      if (_success) {
-        final $28 = _parse_source(false, true);
-        _parseClosedTag(false, false);
-        if (_success) {
-          final s = $28;
-          Fragment $$;
-          $$ = Fragment.code(s);
-          $24 = $$;
-        }
-        if (!_success) {
-          _c = $25;
-          _pos = $26;
-        }
-      }
-      if (_success) {
-        $2 = $24;
-        break;
-      }
-      _c = $4;
-      _pos = $3;
-      Fragment $30;
-      final $33 = _parse_text(false, true);
-      if (_success) {
-        final s = $33;
-        Fragment $$;
-        $$ = Fragment.text(s);
-        $30 = $$;
-      }
-      if (_success) {
-        $2 = $30;
-        break;
-      }
-      break;
-    }
-    if (!_success && _error == $3) {
-      _fail(const ['\'<%@\'', '\'<%==\'', '\'<%=\'', '\'<%\'', '\'text\'']);
-    }
-    return $2;
-  }
-
-  String _parseClosedTag(bool $0, bool $1) {
-    String $2;
-    final $3 = _pos;
-    String $6;
-    final $9 = _parse_$PercentSign$GreaterThanSign(false, $1);
-    if (_success) {
-      $6 = $9;
-    }
-    $2 = $6;
-    if (!_success && _error == $3) {
-      _fail(const ['\'%>\'']);
-    }
-    return $2;
-  }
-
-  Directive _parseDirective(bool $0, bool $1) {
-    Directive $2;
-    final $3 = _pos;
-    Directive $6;
-    final $9 = _parse_indentifier(false, true);
-    if (_success) {
-      final $10 = _parseAttributes(false, true);
-      {
-        final n = $9;
-        final a = $10;
-        Directive $$;
-        $$ = Directive(n, a);
-        $6 = $$;
-      }
-    }
-    $2 = $6;
-    if (!_success && _error == $3) {
-      _fail(const ['\'indentifier\'']);
-    }
-    return $2;
-  }
-
-  List<Attribute> _parseAttributes(bool $0, bool $1) {
-    List<Attribute> $2;
-    final $3 = _pos;
-    List<Attribute> $9;
-    if ($1) {
-      $9 = [];
-    }
-    for (;;) {
-      final $10 = _parseAttribute(false, $1);
-      if (!_success) {
-        _success = true;
-        break;
-      }
-      if ($1) {
-        $9.add($10);
-      }
-    }
-    $2 = $9;
-    if (!_success && _error == $3) {
-      _fail(const []);
-    }
-    return $2;
-  }
-
-  Attribute _parseAttribute(bool $0, bool $1) {
-    Attribute $2;
-    final $3 = _pos;
-    final $4 = _c;
-    Attribute $6;
-    final $9 = _parse_indentifier(false, true);
-    if (_success) {
-      _parse_$EqualSign(false, false);
-      if (_success) {
-        final $11 = _parse_string(false, true);
-        if (_success) {
-          final n = $9;
-          final v = $11;
-          Attribute $$;
-          $$ = Attribute(n, v);
-          $6 = $$;
-        }
-      }
-      if (!_success) {
-        _c = $4;
-        _pos = $3;
-      }
-    }
-    $2 = $6;
-    if (!_success && _error == $3) {
-      _fail(const ['\'indentifier\'']);
-    }
-    return $2;
-  }
-
-  dynamic _parse_eof(bool $0, bool $1) {
-    dynamic $2;
-    dynamic $7;
-    final $10 = _parse$$eof(false, $1);
-    if (_success) {
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'eof\'']);
-    }
-    return $2;
-  }
-
-  String _parse_expression(bool $0, bool $1) {
-    String $2;
-    final $3 = _pos;
-    String $7;
-    String $10;
-    final $12 = $1;
-    $1 = false;
-    List $21;
-    if ($1) {
-      $21 = [];
-    }
-    var $22 = false;
-    for (;;) {
-      dynamic $23;
-      final $24 = _pos;
-      final $25 = _c;
-      dynamic $28;
-      final $33 = _error;
-      final $34 = _expected;
-      final $35 = _failure;
-      final $36 = $1;
-      $1 = false;
-      if (_c == 37) {
-        _matchString('%>');
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      _success = !_success;
-      _c = $25;
-      _pos = $24;
-      _error = $33;
-      _expected = $34;
-      _failure = $35;
-      $1 = $36;
-      var $38;
-      if (_success) {
-        if (_c >= 0 && _c <= 1114111) {
-          _success = true;
-          _c = _input[_pos += _c <= 65535 ? 1 : 2];
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        if (_success) {
-          $28 = $38;
-        } else {
-          _c = $25;
-          _pos = $24;
-        }
-      }
-      $23 = $28;
-      if (!_success) {
-        _success = $22;
-        if (!_success) {
-          $21 = null;
-        }
-        break;
-      }
-      if ($1) {
-        $21.add($23);
-      }
-      $22 = true;
-    }
-    $1 = $12;
-    if ($1) {
-      $10 = _text.substring($3, _pos);
-    }
-    if (_success) {
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'expression\'']);
-    }
-    return $2;
-  }
-
-  String _parse_indentifier(bool $0, bool $1) {
-    String $2;
-    final $3 = _pos;
-    String $7;
-    String $10;
-    final $12 = $1;
-    $1 = false;
-    if (_c >= 65 && _c <= 90 || _c == 95 || _c >= 97 && _c <= 122) {
-      _success = true;
-      _c = _input[++_pos];
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      for (;;) {
-        if (_c >= 48 && _c <= 57 ||
-            _c >= 65 && _c <= 90 ||
-            _c == 95 ||
-            _c >= 97 && _c <= 122) {
-          _success = true;
-          _c = _input[++_pos];
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        if (!_success) {
-          _success = true;
-          break;
-        }
-      }
-    }
-    $1 = $12;
-    if ($1) {
-      $10 = _text.substring($3, _pos);
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'indentifier\'']);
-    }
-    return $2;
-  }
-
-  String _parse_source(bool $0, bool $1) {
-    String $2;
-    final $9 = _pos;
-    String $10;
-    final $12 = $1;
-    $1 = false;
-    List $21;
-    if ($1) {
-      $21 = [];
-    }
-    for (;;) {
-      dynamic $22;
-      final $23 = _pos;
-      final $24 = _c;
-      dynamic $27;
-      final $32 = _error;
-      final $33 = _expected;
-      final $34 = _failure;
-      final $35 = $1;
-      $1 = false;
-      if (_c == 37) {
-        _matchString('%>');
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      _success = !_success;
-      _c = $24;
-      _pos = $23;
-      _error = $32;
-      _expected = $33;
-      _failure = $34;
-      $1 = $35;
-      var $37;
-      if (_success) {
-        if (_c >= 0 && _c <= 1114111) {
-          _success = true;
-          _c = _input[_pos += _c <= 65535 ? 1 : 2];
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        if (_success) {
-          $27 = $37;
-        } else {
-          _c = $24;
-          _pos = $23;
-        }
-      }
-      $22 = $27;
-      if (!_success) {
-        _success = true;
-        break;
-      }
-      if ($1) {
-        $21.add($22);
-      }
-    }
-    $1 = $12;
-    if ($1) {
-      $10 = _text.substring($9, _pos);
-    }
-    $2 = $10;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'source\'']);
-    }
-    return $2;
-  }
-
-  String _parse_string(bool $0, bool $1) {
-    String $2;
-    final $3 = _pos;
-    final $4 = _c;
-    String $7;
-    if (_c == 34) {
-      _success = true;
-      _c = _input[++_pos];
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      List<int> $11;
-      $11 = [];
-      for (;;) {
-        final $12 = _parse$$char(false, true);
-        if (!_success) {
-          _success = true;
-          break;
-        }
-        $11.add($12);
-      }
-      if (_c == 34) {
-        _success = true;
-        _c = _input[++_pos];
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        _parse$$white(false, false);
-        {
-          final c = $11;
-          String $$;
-          $$ = String.fromCharCodes(c);
-          $7 = $$;
-        }
-      }
-      if (!_success) {
-        _c = $4;
-        _pos = $3;
-      }
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'string\'']);
-    }
-    return $2;
-  }
-
-  String _parse_text(bool $0, bool $1) {
-    String $2;
-    final $3 = _pos;
-    String $7;
-    String $10;
-    final $12 = $1;
-    $1 = false;
-    final $14 = _pos;
-    final $15 = _c;
-    final $23 = _error;
-    final $24 = _expected;
-    final $25 = _failure;
-    final $26 = $1;
-    $1 = false;
-    _parse$$eof(false, $1);
-    _success = !_success;
-    _c = $15;
-    _pos = $14;
-    _error = $23;
-    _expected = $24;
-    _failure = $25;
-    $1 = $26;
-    if (_success) {
-      for (;;) {
-        final $35 = $1;
-        $1 = false;
-        final $37 = _c;
-        final $38 = _pos;
-        final $41 = _error;
-        final $42 = _expected;
-        final $43 = _failure;
-        final $44 = $1;
-        $1 = false;
-        if (_c == 60) {
-          _matchString('<%');
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        _success = !_success;
-        _c = $37;
-        _pos = $38;
-        _error = $41;
-        _expected = $42;
-        _failure = $43;
-        $1 = $44;
-        if (_success) {
-          final $47 = _c;
-          final $48 = _pos;
-          final $49 = _error;
-          final $50 = _expected;
-          final $51 = _failure;
-          final $52 = $1;
-          $1 = false;
-          _parse$$newline(false, false);
-          _success = !_success;
-          _c = $47;
-          _pos = $48;
-          _error = $49;
-          _expected = $50;
-          _failure = $51;
-          $1 = $52;
-          if (_success) {
-            if (_c >= 0 && _c <= 1114111) {
-              _success = true;
-              _c = _input[_pos += _c <= 65535 ? 1 : 2];
-            } else {
-              _success = false;
-              _failure = _pos;
-            }
-          }
-          if (!_success) {
-            _c = $37;
-            _pos = $38;
-          }
-        }
-        $1 = $35;
-        if (!_success) {
-          _success = true;
-          break;
-        }
-      }
-      _parse$$newline(false, false);
-      _success = true;
-    }
-    $1 = $12;
-    if ($1) {
-      $10 = _text.substring($3, _pos);
-    }
-    if (_success) {
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'text\'']);
-    }
-    return $2;
-  }
-
-  String _parse_$EqualSign(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 61) {
-      _success = true;
-      $10 = '=';
-      _c = _input[++_pos];
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'=\'']);
-    }
-    return $2;
-  }
-
-  String _parse_$LessThanSign$PercentSign(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 60) {
-      $10 = _matchString('<%');
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'<%\'']);
-    }
-    return $2;
-  }
-
-  String _parse$Terminal14(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 60) {
-      $10 = _matchString('<%=');
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'<%=\'']);
-    }
-    return $2;
-  }
-
-  String _parse$Terminal15(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 60) {
-      $10 = _matchString('<%==');
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'<%==\'']);
-    }
-    return $2;
-  }
-
-  String _parse$Terminal16(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 60) {
-      $10 = _matchString('<%@');
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      _parse$$white(false, false);
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'<%@\'']);
-    }
-    return $2;
-  }
-
-  String _parse_$PercentSign$GreaterThanSign(bool $0, bool $1) {
-    String $2;
-    String $7;
-    String $10;
-    if (_c == 37) {
-      $10 = _matchString('%>');
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    if (_success) {
-      $7 = $10;
-    }
-    $2 = $7;
-    if (!_success && _error <= _failure) {
-      _fail(const ['\'%>\'']);
-    }
-    return $2;
-  }
-
-  int _parse$$char(bool $0, bool $1) {
-    int $2;
-    for (;;) {
-      int $6;
-      int $9;
-      if (_c >= 32 && _c <= 33) {
-        _success = true;
-        $9 = _c;
-        _c = _input[++_pos];
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        $6 = $9;
-        $2 = $6;
-        break;
-      }
-      int $10;
-      int $13;
-      if (_c >= 35 && _c <= 91) {
-        _success = true;
-        $13 = _c;
-        _c = _input[++_pos];
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        $10 = $13;
-        $2 = $10;
-        break;
-      }
-      int $14;
-      int $17;
-      if (_c >= 93 && _c <= 1114111) {
-        _success = true;
-        $17 = _c;
-        _c = _input[_pos += _c <= 65535 ? 1 : 2];
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        $14 = $17;
-        $2 = $14;
-        break;
-      }
-      break;
-    }
-    return $2;
-  }
-
-  dynamic _parse$$eof(bool $0, bool $1) {
-    dynamic $2;
-    final $3 = _pos;
-    final $4 = _c;
-    dynamic $6;
-    final $11 = _error;
-    final $12 = _expected;
-    final $13 = _failure;
-    final $14 = $1;
-    $1 = false;
-    if (_c >= 0 && _c <= 1114111) {
-      _success = true;
-      _c = _input[_pos += _c <= 65535 ? 1 : 2];
-    } else {
-      _success = false;
-      _failure = _pos;
-    }
-    _success = !_success;
-    _c = $4;
-    _pos = $3;
-    _error = $11;
-    _expected = $12;
-    _failure = $13;
-    $1 = $14;
-    var $16;
-    if (_success) {
-      $6 = $16;
-    }
-    $2 = $6;
-    return $2;
-  }
-
-  dynamic _parse$$newline(bool $0, bool $1) {
-    dynamic $2;
-    for (;;) {
-      int $6;
-      int $9;
-      if (_c == 10) {
-        _success = true;
-        $9 = _c;
-        _c = _input[++_pos];
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        $6 = $9;
-        $2 = $6;
-        break;
-      }
-      String $10;
-      String $13;
-      if (_c == 13) {
-        $13 = _matchString('\r\n');
-      } else {
-        _success = false;
-        _failure = _pos;
-      }
-      if (_success) {
-        $10 = $13;
-        $2 = $10;
-        break;
-      }
-      break;
-    }
-    return $2;
-  }
-
-  List _parse$$white(bool $0, bool $1) {
-    List $2;
-    List $9;
-    if ($1) {
-      $9 = [];
-    }
-    for (;;) {
-      dynamic $10;
-      for (;;) {
-        int $14;
-        int $17;
-        if (_c >= 9 && _c <= 10 || _c == 32) {
-          _success = true;
-          $17 = _c;
-          _c = _input[++_pos];
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        if (_success) {
-          $14 = $17;
-          $10 = $14;
-          break;
-        }
-        String $18;
-        String $21;
-        if (_c == 13) {
-          $21 = _matchString('\r\n');
-        } else {
-          _success = false;
-          _failure = _pos;
-        }
-        if (_success) {
-          $18 = $21;
-          $10 = $18;
-          break;
-        }
-        break;
-      }
-      if (!_success) {
-        _success = true;
-        break;
-      }
-      if ($1) {
-        $9.add($10);
-      }
-    }
-    $2 = $9;
-    return $2;
+    _ch = _getChar(0);
+    ok = false;
   }
 }
-
-class _Memo {
-  final int id;
-  final int pos;
-  final bool productive;
-  final result;
-  final bool success;
-
-  _Memo({
-    this.id,
-    this.pos,
-    this.productive,
-    this.result,
-    this.success,
-  });
-}
-
+// ignore_for_file: non_constant_identifier_names
 // ignore_for_file: unused_element
-// ignore_for_file: unused_field

@@ -1,3 +1,5 @@
+// @dart = 2.10
+
 import 'dart:collection';
 
 import 'package:code_builder/code_builder.dart' as _cb;
@@ -25,7 +27,7 @@ class EdartCompiler {
     }
 
     final parser = EdartParser();
-    final fragments = parser.parse(source) as List<Fragment>;
+    final fragments = parser.parse(source);
     if (parser.error != null) {
       throw parser.error;
     }

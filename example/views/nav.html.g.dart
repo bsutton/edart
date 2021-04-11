@@ -8,7 +8,7 @@ class nav_html {
     final out = StringBuffer();
     out.write('<div class="w3-bar w3-black">\n');
     final url = request.requestedUri.path;
-    String getClass(MenuItem item, MenuItem active) {
+    String getClass(MenuItem item, MenuItem? active) {
       final result = ['w3-bar-item', 'w3-button'];
       if (item == active) {
         result.add('w3-red');

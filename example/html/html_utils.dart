@@ -3,18 +3,18 @@ import 'dart:convert';
 class HtmlTag {
   final Map<String, String> attributes = {};
 
-  String content;
+  String? content;
 
   final String name;
 
-  HtmlTag(this.name, [Map<String, String> attributes, this.content]) {
+  HtmlTag(this.name, [Map<String, String>? attributes, this.content]) {
     if (attributes != null) {
       this.attributes.addAll(attributes);
     }
 
     content ??= '';
     final elemEscape = HtmlEscape(HtmlEscapeMode.element);
-    content = elemEscape.convert(content);
+    content = elemEscape.convert(content!);
   }
 
   @override
@@ -27,6 +27,7 @@ class HtmlTag {
       sb.write(HtmlUtils.attrs(attributes));
     }
 
+    final content = this.content ??= '';
     if (content.isEmpty) {
       sb.write('>');
     } else {
@@ -48,7 +49,7 @@ class HtmlUtils {
     for (final key in attributes.keys) {
       sb.write(key);
       sb.write('="');
-      var value = attributes[key];
+      var value = attributes[key]!;
       value = attrEscape.convert(value);
       sb.write(value);
       sb.write('"');
@@ -57,7 +58,7 @@ class HtmlUtils {
     return sb.toString();
   }
 
-  static String href(String url, [Map<String, dynamic> attributes]) {
+  static String href(String url, [Map<String, dynamic>? attributes]) {
     attributes ??= {};
     final sb = StringBuffer();
     sb.write(url);
@@ -65,9 +66,9 @@ class HtmlUtils {
     for (final key in attributes.keys) {
       final value = attributes[key];
       if (value != null) {
-        params.add('?${key}=${value}');
+        params.add('?$key=$value');
       } else {
-        params.add('?${key}');
+        params.add('?$key');
       }
     }
 

@@ -11,7 +11,9 @@ class CatalogService {
     return _products.toList();
   }
 
-  Future<Product> getProduct(int id) async {
-    return _products.firstWhere((e) => e.id == id, orElse: () => null);
+  Future<Product?> getProduct(int id) async {
+    return _products
+        .cast<Product?>()
+        .firstWhere((e) => e!.id == id, orElse: () => null);
   }
 }

@@ -15,13 +15,13 @@ class Directive {
 }
 
 class Fragment {
-  final Directive directive;
+  final Directive? directive;
 
-  final String source;
+  final String? source;
 
   final FragmentType type;
 
-  Fragment({this.directive, this.source, this.type});
+  Fragment({this.directive, this.source, required this.type});
 
   Fragment.code(this.source)
       : directive = null,

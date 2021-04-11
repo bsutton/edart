@@ -53,14 +53,20 @@ Future<void> _handleNotFound(HttpRequest request) async {
 
 Future<void> _handleProduct(HttpRequest request) async {
   final params = request.uri.queryParameters;
-  final id = int.parse(params['id'], onError: (s) => null);
+  final id = params['id'];
   if (id == null) {
     await request.response.redirect(Uri.parse('/'));
     return;
   }
 
+  final productId = int.tryParse(id);
+  if (productId == null) {
+    await request.response.redirect(Uri.parse('/'));
+    return;
+  }
+
   final catalog = CatalogService();
-  final product = await catalog.getProduct(id);
+  final product = await catalog.getProduct(productId);
   if (product == null) {
     await request.response.redirect(Uri.parse('/'));
     return;
