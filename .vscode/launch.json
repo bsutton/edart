@@ -5,7 +5,10 @@
             "name": "Dart",
             "program": "bin/edart.dart",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "example\\views\\product.html"
+            ]
         }
     ]
 }

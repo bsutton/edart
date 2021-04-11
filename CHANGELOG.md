@@ -1,3 +1,7 @@
+## 0.1.9
+
+- Fixed bug. Corrected version of Dart in command line tool
+
 ## 0.1.8
 
 - The parser was generated using a newer version of the parser generator

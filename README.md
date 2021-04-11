@@ -3,7 +3,7 @@
 
 Embedded Dart template engine and compiler. Compiles templates to Dart source code.
 
-Version: 0.1.8
+Version: 0.1.9
 
 ### Warning
 
